@@ -1,0 +1,71 @@
+{
+  "name": "brianhenryie/bh-wp-plugin-meta-kit",
+  "description": "Library with convenience functions for WordPress admin plugin meta.",
+  "type": "library",
+  "license": "GPL-2.0+-or-later",
+  "authors": [
+    {
+      "name": "Brian Henry",
+      "email": "BrianHenryIE@gmail.com"
+    }
+  ],
+  "autoload": {
+    "classmap": ["src"]
+  },
+  "autoload-dev": {
+    "classmap": ["tests/unit","tests/wpunit"]
+  },
+  "minimum-stability": "dev",
+  "prefer-stable": true,
+  "config": {
+    "process-timeout": 0,
+    "sort-packages": true,
+    "allow-plugins": {
+      "composer/installers": true,
+      "cweagans/composer-patches": true,
+      "dealerdirect/phpcodesniffer-composer-installer": true,
+      "johnpbloch/wordpress-core-installer": true,
+      "phpstan/extension-installer": true
+    }
+  },
+  "repositories": {
+    "outlandishideas/wpackagist": {
+      "type": "composer",
+      "url": "https://wpackagist.org"
+    },
+    "wordpress/wordpress": {
+      "url": "https://github.com/WordPress/wordpress-develop",
+      "type": "git"
+    }
+  },
+  "require": {
+    "php": ">=8.0",
+    "afragen/wordpress-plugin-readme-parser": "dev-master",
+    "erusev/parsedown": "*",
+    "wptrt/admin-notices": "^1.0"
+  },
+  "require-dev": {
+    "10up/wp_mock": "^1.0",
+    "antecedent/patchwork": "^2.1",
+    "brianhenryie/color-logger": "^1.0",
+    "brianhenryie/php-diff-test": "*",
+    "cweagans/composer-patches": "*",
+    "dealerdirect/phpcodesniffer-composer-installer": "^1.0",
+    "jaschilz/php-coverage-badger": "^2.0",
+    "johnpbloch/wordpress": "*",
+    "kporras07/composer-symlinks": "dev-master",
+    "lucatume/wp-browser": "^4.0",
+    "mheap/phpunit-github-actions-printer": "^1.5",
+    "phpcompatibility/phpcompatibility-wp": "*",
+    "phpstan/extension-installer": "*",
+    "phpstan/phpstan": "*",
+    "phpunit/phpcov": "*",
+    "squizlabs/php_codesniffer": "*",
+    "szepeviktor/phpstan-wordpress": "*",
+    "wordpress/wordpress": "*",
+    "wp-cli/dist-archive-command": "dev-main",
+    "wp-cli/i18n-command": "^2.4",
+    "wp-cli/wp-cli-bundle": "*",
+    "wp-coding-standards/wpcs": "*"
+  }
+}
