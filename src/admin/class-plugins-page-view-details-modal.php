@@ -21,14 +21,20 @@ class Plugins_Page_View_Details_Modal {
 	/**
 	 * @hooked site_transient_update_plugins
 	 *
-	 * @param $update_plugins
-	 * @param $transient
+	 * @param false|object $update_plugins
+	 * @param string $transient Transient name.
 	 *
-	 * @return object
+	 * @return false|object
 	 * @see get_site_transient()
 	 *
 	 */
-	public function update_plugins_transient( $update_plugins, $transient ): object {
+	public function update_plugins_transient( $update_plugins, string $transient ) {
+
+		// TODO: This seemed to happed once on a brand new site.
+		// Presumably because the transient was not set yet.
+		if(is_bool($update_plugins)){
+			return $update_plugins;
+		}
 
 		// This is needed to get the `View details` link to appear on `plugins.php`.
 
