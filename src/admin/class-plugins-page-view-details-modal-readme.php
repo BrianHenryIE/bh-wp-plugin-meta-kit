@@ -6,7 +6,7 @@
 namespace BrianHenryIE\Plugin_Meta_Kit\Admin;
 
 use BrianHenryIE\Plugin_Meta_Kit\Plugin_Meta_Kit_Settings_Interface;
-use Parsedown as MarkdownParser;
+use Parsedown;
 use WordPressdotorg\Plugin_Directory\Readme\Parser as ReadmeParser;
 
 class Plugins_Page_View_Details_Modal_Readme {
@@ -91,7 +91,7 @@ class Plugins_Page_View_Details_Modal_Readme {
 		}
 
 
-		$parsedown = new MarkdownParser();
+		$parsedown = new Parsedown();
 
 		foreach( $res->sections as $name => $section ) {
 			$res->sections[$name] = $parsedown->text( $section );
