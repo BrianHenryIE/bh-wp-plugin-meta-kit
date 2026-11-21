@@ -1,0 +1,14 @@
+{
+  "name": "bh-wp-plugin-meta-kit",
+  "version": "1.0.0",
+  "description": "Library with convenience functions for WordPress admin plugin meta.",
+  "scripts": {
+    "wp-env": "wp-env start"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "GPL-2.0+",
+  "devDependencies": {
+    "@wordpress/env": "^11.11"
+  }
+}

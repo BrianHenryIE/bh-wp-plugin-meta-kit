@@ -68,5 +68,11 @@
     "wp-cli/i18n-command": "^2.4",
     "wp-cli/wp-cli-bundle": "*",
     "wp-coding-standards/wpcs": "*"
+  },
+  "scripts": {
+    "post-autoload-dump": [
+      "php ./bin/sync-composer-wpenv.php",
+      "php ./bin/wpenv-mappings-to-phpstorm.php"
+    ]
   }
 }

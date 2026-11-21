@@ -1,0 +1,18 @@
+{
+  "config": {
+    "WP_DEBUG_LOG": "/var/www/html/wp-content/debug.log"
+  },
+  "port": 8884,
+  "mysqlPort": 33064,
+  "lifecycleScripts": {
+    "afterStart": "bash 'tests/wp-env/initialize-external.sh'"
+  },
+  "mappings": {
+    "setup": "./tests/wp-env",
+    "wp-content/plugins/development-plugin": "./development-plugin",
+    "wp-content/uploads/development-plugin": "."
+  },
+  "phpVersion": "8.2",
+  "testsEnvironment": false,
+  "core": "WordPress/WordPress#6.5.3"
+}
