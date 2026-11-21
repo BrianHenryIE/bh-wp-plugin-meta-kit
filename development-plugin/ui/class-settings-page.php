@@ -1,6 +1,6 @@
 <?php
 /**
- * The development plugin's settings screen: Settings → Meta Kit Development.
+ * The development plugin's settings screen: Meta Kit Development, in the admin menu.
  *
  * @package brianhenryie/bh-wp-plugin-meta-kit
  */
@@ -41,18 +41,19 @@ class Settings_Page {
 	}
 
 	/**
-	 * Add the screen under Settings.
+	 * Add the screen as a top-level item of the admin menu.
 	 *
 	 * @hooked admin_menu
 	 * @see self::register_hooks()
 	 */
 	public function add_page(): void {
-		add_options_page(
+		add_menu_page(
 			'Meta Kit Development',
 			'Meta Kit Development',
 			'manage_options',
 			self::PAGE_SLUG,
 			array( $this, 'print_page' ),
+			'dashicons-admin-plugins',
 		);
 	}
 
@@ -124,7 +125,7 @@ class Settings_Page {
 					'page'                    => self::PAGE_SLUG,
 					'dismissed-notices-reset' => '1',
 				),
-				admin_url( 'options-general.php' ),
+				admin_url( 'admin.php' ),
 			),
 		);
 		exit;

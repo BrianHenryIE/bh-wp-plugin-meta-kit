@@ -94,7 +94,7 @@ test.describe( 'dependencies notice', () => {
 		await admin.visitAdminPage( 'index.php' );
 		await dismissNotice( page );
 
-		await admin.visitAdminPage( 'options-general.php', 'page=development-plugin' );
+		await admin.visitAdminPage( 'admin.php', 'page=development-plugin' );
 
 		await expect( noticeOn( page ) ).toHaveCount( 0 );
 
@@ -109,7 +109,7 @@ test.describe( 'dependencies notice', () => {
 	test( 'can be switched on from the development plugin settings screen', async ( { admin, page, requestUtils } ) => {
 		await requestUtils.updateSiteSettings( { development_plugin_missing_dependency: false } as any );
 
-		await admin.visitAdminPage( 'options-general.php', 'page=development-plugin' );
+		await admin.visitAdminPage( 'admin.php', 'page=development-plugin' );
 
 		await expect( noticeOn( page ) ).toHaveCount( 0 );
 
