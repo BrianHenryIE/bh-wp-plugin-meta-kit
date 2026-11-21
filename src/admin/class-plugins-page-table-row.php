@@ -51,9 +51,10 @@ class Plugins_Page_Table_Row {
 	}
 
 	/**
-	 * Add a link to GitHub repo on the plugins list.
+	 * Add a link to the plugin's GitHub repository after its version and author, when the plugin has one.
 	 *
 	 * @hooked plugin_row_meta
+	 * @see Plugin_Meta_Kit::plugins_page_table_row()
 	 * @see https://rudrastyh.com/wordpress/plugin_action_links-plugin_row_meta.html
 	 *
 	 * @param array<int|string, string>  $plugin_meta      The meta information/links displayed by the plugin description.
@@ -63,10 +64,17 @@ class Plugins_Page_Table_Row {
 	 *
 	 * @return array<int|string, string> The filtered $plugin_meta.
 	 */
-	public function row_meta( array $plugin_meta, string $plugin_file_name, array $plugin_data, string $status ): array {
-		if ( $this->settings->plugin_basename === $plugin_file_name ) {
-			$plugin_meta[] = '<a target="_blank" href="https://github.com/BrianHenryIE/' . $this->settings->plugin_slug . '">View on GitHub</a>';
+	public function add_github_row_meta( array $plugin_meta, string $plugin_file_name, array $plugin_data, string $status ): array {
+		if ( '' === $this->settings->github_url ) {
+			return $plugin_meta;
 		}
+
+		// The filter runs for every plugin's row.
+		if ( $this->settings->plugin_basename !== $plugin_file_name ) {
+			return $plugin_meta;
+		}
+
+		$plugin_meta[] = '<a target="_blank" href="' . esc_url( $this->settings->github_url ) . '">' . esc_html__( 'View on GitHub', 'bh-wp-plugin-meta-kit' ) . '</a>';
 
 		return $plugin_meta;
 	}

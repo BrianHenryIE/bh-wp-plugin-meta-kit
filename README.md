@@ -46,7 +46,7 @@ use BrianHenryIE\Plugin_Meta_Kit\Plugin_Meta_Kit;
 use BrianHenryIE\Plugin_Meta_Kit\Plugin_Meta_Kit_Settings;
 
 // Replace the zero-config setup with your own settings.
-remove_action( 'admin_init', '\\BrianHenryIE\\Plugin_Meta_Kit\\initialize_plugin_meta_kit' );
+remove_action( 'admin_init', 'BrianHenryIE\\Plugin_Meta_Kit\\initialize_plugin_meta_kit' );
 
 add_action(
 	'admin_init',
@@ -85,3 +85,17 @@ Add a `Settings Link` header to your plugin's main file and the zero-config setu
 ```
 
 When you build `Plugin_Meta_Kit_Settings` yourself, pass the full URL as `settings_url`.
+
+
+## GitHub link
+
+Add a `GitHub Link` header and a "View on GitHub" link is added after the plugin's version and author on plugins.php. It is a full URL, or `owner/repository`:
+
+```php
+/**
+ * Plugin Name: My Plugin
+ * GitHub Link: https://github.com/example/my-plugin
+ */
+```
+
+When you build `Plugin_Meta_Kit_Settings` yourself, pass the full URL as `github_url`.

@@ -28,7 +28,7 @@ class Library_Setup {
 	public function register_hooks(): void {
 		remove_action(
 			'admin_init',
-			'\\BrianHenryIE\\Plugin_Meta_Kit\\initialize_plugin_meta_kit',
+			'BrianHenryIE\\Plugin_Meta_Kit\\initialize_plugin_meta_kit',
 		);
 		add_action( 'admin_init', array( $this, 'initialize_library' ) );
 
@@ -69,6 +69,7 @@ class Library_Setup {
 			plugin_name: $inferred_settings->plugin_name,
 			dependencies: array( $this->get_example_dependency() ),
 			settings_url: $inferred_settings->settings_url,
+			github_url: $inferred_settings->github_url,
 		);
 	}
 

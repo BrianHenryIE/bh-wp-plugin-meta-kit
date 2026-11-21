@@ -7,6 +7,7 @@
  * Author:        BrianHenryIE
  * Author URI:    https://bhwp.ie
  * Settings Link: admin.php?page=development-plugin
+ * GitHub Link:   https://github.com/BrianHenryIE/bh-wp-plugin-meta-kit
  *
  * @package brianhenryie/bh-wp-plugin-meta-kit
  */

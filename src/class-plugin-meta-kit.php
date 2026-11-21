@@ -114,13 +114,19 @@ class Plugin_Meta_Kit {
 	}
 
 	/**
-	 * Add the hook which adds the Settings link to the plugin's row on plugins.php.
+	 * Add the hooks which add the Settings and GitHub links to the plugin's row on plugins.php.
 	 */
 	public function plugins_page_table_row(): void {
 		$plugins_page_table_row = new Plugins_Page_Table_Row( $this->settings );
 		add_filter(
 			'plugin_action_links_' . $this->settings->plugin_basename,
 			array( $plugins_page_table_row, 'action_links' ),
+			10,
+			4,
+		);
+		add_filter(
+			'plugin_row_meta',
+			array( $plugins_page_table_row, 'add_github_row_meta' ),
 			10,
 			4,
 		);

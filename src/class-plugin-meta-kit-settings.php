@@ -23,6 +23,7 @@ readonly class Plugin_Meta_Kit_Settings {
 	 * @param string       $plugin_name     The `Plugin Name` header of the plugin's main file.
 	 * @param Dependency[] $dependencies    What the plugin needs from the site; an admin notice is shown for each which is missing.
 	 * @param string       $settings_url    The full URL of the plugin's settings screen, linked from its row on plugins.php, or empty when it has none.
+	 * @param string       $github_url      The full URL of the plugin's GitHub repository, linked from its row on plugins.php, or empty when it has none.
 	 */
 	public function __construct(
 		public string $plugin_slug,
@@ -30,6 +31,7 @@ readonly class Plugin_Meta_Kit_Settings {
 		public string $plugin_name,
 		public array $dependencies = array(),
 		public string $settings_url = '',
+		public string $github_url = '',
 	) {
 	}
 }

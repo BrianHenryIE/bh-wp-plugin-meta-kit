@@ -94,6 +94,22 @@ class Plugin_Meta_Kit_Unit_Test extends Unit_Testcase {
 	}
 
 	/**
+	 * @covers ::plugins_page_table_row
+	 */
+	public function test_initialize_adds_the_github_link_hook(): void {
+		WP_Mock::expectFilterAdded(
+			'plugin_row_meta',
+			array( new AnyInstance( Plugins_Page_Table_Row::class ), 'add_github_row_meta' ),
+			10,
+			4,
+		);
+
+		Plugin_Meta_Kit::initialize( $this->get_settings() );
+
+		WP_Mock::assertHooksAdded();
+	}
+
+	/**
 	 * It is not only called on wp-admin page loads, where `initialize()` has set the notices up.
 	 *
 	 * @covers ::reset_dismissed_notices

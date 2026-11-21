@@ -9,6 +9,8 @@ use lucatume\WPBrowser\TestCase\WPTestCase;
 /**
  * @covers \BrianHenryIE\Plugin_Meta_Kit\make_settings
  * @covers \BrianHenryIE\Plugin_Meta_Kit\get_settings_url
+ * @covers \BrianHenryIE\Plugin_Meta_Kit\get_github_url
+ * @covers \BrianHenryIE\Plugin_Meta_Kit\get_plugin_file_header
  */
 class Bootstrap2_WPUnit_Test extends WPTestCase {
 	protected const TEST_PLUGIN_SLUG = 'meta-kit-test-plugin';
@@ -133,5 +135,44 @@ class Bootstrap2_WPUnit_Test extends WPTestCase {
 		$this->install_test_plugin();
 
 		$this->assertSame( '', $this->make_test_plugin_settings()->settings_url );
+	}
+
+	public function test_github_link_header_which_is_a_full_url(): void {
+		$this->install_test_plugin( " * GitHub Link: https://github.com/example/meta-kit-test-plugin\n" );
+
+		$this->assertSame(
+			'https://github.com/example/meta-kit-test-plugin',
+			$this->make_test_plugin_settings()->github_url,
+		);
+	}
+
+	public function test_github_link_header_which_is_owner_and_repository(): void {
+		$this->install_test_plugin( " * GitHub Link: example/meta-kit-test-plugin\n" );
+
+		$this->assertSame(
+			'https://github.com/example/meta-kit-test-plugin',
+			$this->make_test_plugin_settings()->github_url,
+		);
+	}
+
+	public function test_github_link_and_settings_link_headers_together(): void {
+		$this->install_test_plugin( " * Settings Link: admin.php?page=meta-kit-test-plugin\n * GitHub Link:   https://github.com/example/meta-kit-test-plugin\n" );
+
+		$result = $this->make_test_plugin_settings();
+
+		$this->assertSame(
+			admin_url( 'admin.php?page=meta-kit-test-plugin' ),
+			$result->settings_url,
+		);
+		$this->assertSame(
+			'https://github.com/example/meta-kit-test-plugin',
+			$result->github_url,
+		);
+	}
+
+	public function test_plugin_without_a_github_link_header_has_no_github_url(): void {
+		$this->install_test_plugin();
+
+		$this->assertSame( '', $this->make_test_plugin_settings()->github_url );
 	}
 }
