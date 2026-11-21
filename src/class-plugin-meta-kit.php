@@ -75,7 +75,7 @@ class Plugin_Meta_Kit {
 			3,
 		);
 
-		$plugin_details_tabs = new Plugins_Page_View_Details_Modal_Readme( $this->settings );
+		$plugin_details_tabs = new Plugins_Page_View_Details_Modal_Readme( $this->settings, new Readme_Parser() );
 		add_filter( 'plugins_api', array( $plugin_details_tabs, 'add_tabs' ), 10, 3 );
 	}
 

@@ -4,9 +4,12 @@ declare( strict_types = 1 );
 
 namespace BrianHenryIE\Plugin_Meta_Kit\Admin;
 
+use BrianHenryIE\Plugin_Meta_Kit\Model\Readme;
 use BrianHenryIE\Plugin_Meta_Kit\Plugin_Meta_Kit_Settings;
+use BrianHenryIE\Plugin_Meta_Kit\Readme_Parser;
 use BrianHenryIE\Plugin_Meta_Kit\Unit_Testcase;
-use Closure;
+use Mockery;
+use ReflectionMethod;
 use stdClass;
 use WP_Mock;
 
@@ -17,8 +20,7 @@ class Plugins_Page_View_Details_Modal_Readme_Unit_Test extends Unit_Testcase {
 	/** A temporary directory standing in for `wp-content/plugins`. */
 	protected string $plugins_directory;
 
-	/** The file the readme parser was asked to read, if it was. */
-	protected ?string $parsed_readme_path = null;
+	protected const README_CONTENTS = "=== My Plugin ===\nRequires at least: 6.2\n";
 
 	protected function setUp(): void {
 		parent::setUp();
@@ -52,34 +54,35 @@ class Plugins_Page_View_Details_Modal_Readme_Unit_Test extends Unit_Testcase {
 	}
 
 	/**
-	 * The system under test, with the readme parser (which needs WordPress) replaced by its parsed result.
+	 * The system under test, with the readme parser (which needs WordPress) mocked.
 	 *
-	 * @param array<string, mixed> $parsed_readme The public properties the parser would have after parsing.
+	 * @param ?Readme $readme What the parser returns, or null when it must not be called.
 	 */
-	protected function get_sut( array $parsed_readme = array() ): Plugins_Page_View_Details_Modal_Readme {
-		$record_parsed_readme_path = function ( string $readme_path ): void {
-			$this->parsed_readme_path = $readme_path;
-		};
+	protected function get_sut( ?Readme $readme = null ): Plugins_Page_View_Details_Modal_Readme {
+		$readme_parser = Mockery::mock( Readme_Parser::class );
 
-		return new class( $this->get_settings(), $parsed_readme, $record_parsed_readme_path ) extends Plugins_Page_View_Details_Modal_Readme {
-			/**
-			 * @param Plugin_Meta_Kit_Settings $settings                  The plugin.
-			 * @param array<string, mixed>     $parsed_readme             The public properties the parser would have after parsing.
-			 * @param Closure(string): void    $record_parsed_readme_path Told which file the parser was asked to read.
-			 */
-			public function __construct(
-				Plugin_Meta_Kit_Settings $settings,
-				protected array $parsed_readme,
-				protected Closure $record_parsed_readme_path,
-			) {
-				parent::__construct( $settings );
-			}
+		if ( null === $readme ) {
+			$readme_parser->shouldNotReceive( 'parse' );
+		} else {
+			$readme_parser->shouldReceive( 'parse' )
+				->once()
+				->with( self::README_CONTENTS )
+				->andReturn( $readme );
+		}
 
-			protected function get_readme( string $readme_path ): array {
-				( $this->record_parsed_readme_path )( $readme_path );
-				return $this->parsed_readme;
-			}
-		};
+		return new Plugins_Page_View_Details_Modal_Readme( $this->get_settings(), $readme_parser );
+	}
+
+	/**
+	 * Write the plugin's readme.
+	 *
+	 * @param string $readme_filename The name the plugin gave its readme.
+	 */
+	protected function put_readme( string $readme_filename = 'readme.txt' ): void {
+		file_put_contents(
+			$this->plugins_directory . '/my-plugin/' . $readme_filename,
+			self::README_CONTENTS,
+		);
 	}
 
 	/**
@@ -145,11 +148,10 @@ class Plugins_Page_View_Details_Modal_Readme_Unit_Test extends Unit_Testcase {
 
 		$result = $this->add_tabs( $sut );
 
-				$this->assertSame( 'my-plugin', $result['slug'] );
+		$this->assertSame( 'my-plugin', $result['slug'] );
 		$this->assertSame( 'My Plugin', $result['name'] );
 		$this->assertSame( array(), $result['sections'] );
 		$this->assertSame( '1.2.3', $result['Version'] );
-		$this->assertNull( $this->parsed_readme_path );
 	}
 
 	/**
@@ -174,61 +176,104 @@ class Plugins_Page_View_Details_Modal_Readme_Unit_Test extends Unit_Testcase {
 
 	/**
 	 * @covers ::add_tabs
+	 * @covers ::get_readme_fields
 	 */
 	public function test_readme_fields_are_added(): void {
 		$this->mock_plugin_headers();
 		WP_Mock::userFunction( 'get_bloginfo' )->with( 'version' )->andReturn( '6.5.3' );
-		touch( $this->plugins_directory . '/my-plugin/readme.txt' );
+		$this->put_readme();
 
 		$sut = $this->get_sut(
-			array(
-				'requires'     => '6.2',
-				'requires_php' => '8.2',
-				'tested'       => '6.4',
-				'sections'     => array( 'description' => 'What it does.' ),
+			new Readme(
+				name: 'My Plugin Readme Name',
+				requires: '6.2',
+				tested: '6.4',
+				requires_php: '8.2',
+				donate_link: 'https://example.org/donate',
+				short_description: 'Short.',
+				sections: array( 'description' => '<p>What it does.</p>' ),
+				upgrade_notices: array( '1.2.3' => '<p>Upgrade.</p>' ),
 			),
 		);
 
 		$result = $this->add_tabs( $sut );
 
-		$this->assertSame(
-			$this->plugins_directory . '/my-plugin/readme.txt',
-			$this->parsed_readme_path,
-		);
+		$this->assertSame( 'My Plugin Readme Name', $result['name'] );
 		$this->assertSame( '6.2', $result['requires'] );
+		$this->assertSame( '6.4', $result['tested'] );
 		$this->assertSame( '8.2', $result['requires_php'] );
+		$this->assertSame( 'https://example.org/donate', $result['donate_link'] );
+		$this->assertSame( 'Short.', $result['short_description'] );
 		$this->assertSame(
 			array( 'description' => '<p>What it does.</p>' ),
 			$result['sections'],
+		);
+		$this->assertSame(
+			array( '1.2.3' => '<p>Upgrade.</p>' ),
+			$result['upgrade_notice'],
 		);
 	}
 
 	/**
 	 * @covers ::add_tabs
+	 * @covers ::get_readme_fields
 	 */
-	public function test_readme_sections_markdown_is_converted_to_html(): void {
+	public function test_empty_readme_fields_do_not_replace_an_earlier_filters(): void {
+		$this->mock_plugin_headers();
+		WP_Mock::userFunction( 'get_bloginfo' )->with( 'version' )->andReturn( '6.5.3' );
+		$this->put_readme();
+
+		$earlier_result               = new stdClass();
+		$earlier_result->requires     = '5.9';
+		$earlier_result->requires_php = '7.4';
+
+		$result = $this->add_tabs( $this->get_sut( new Readme( requires_php: '8.2' ) ), $earlier_result );
+
+		$this->assertSame( '5.9', $result['requires'] );
+		$this->assertSame( '8.2', $result['requires_php'] );
+		$this->assertArrayNotHasKey( 'donate_link', $result );
+		$this->assertArrayNotHasKey( 'contributors', $result );
+	}
+
+	/**
+	 * Core's modal reads `display_name`, `profile` and `avatar` of each contributor.
+	 *
+	 * @covers ::get_contributors
+	 */
+	public function test_contributors_are_in_the_shape_core_prints(): void {
+		$this->mock_plugin_headers();
+		WP_Mock::userFunction( 'get_bloginfo' )->with( 'version' )->andReturn( '6.5.3' );
+		$this->put_readme();
+
+		WP_Mock::userFunction( 'get_avatar_url' )
+			->with( '', array( 'force_default' => true ) )
+			->andReturn( 'https://secure.gravatar.com/avatar/?d=mm' );
+
+		$result = $this->add_tabs( $this->get_sut( new Readme( contributors: array( 'brianhenryie' ) ) ) );
+
+		$this->assertSame(
+			array(
+				'brianhenryie' => array(
+					'display_name' => 'brianhenryie',
+					'profile'      => 'https://profiles.wordpress.org/brianhenryie/',
+					'avatar'       => 'https://secure.gravatar.com/avatar/?d=mm',
+				),
+			),
+			$result['contributors'],
+		);
+	}
+
+	/**
+	 * @covers ::get_readme_fields
+	 */
+	public function test_an_empty_readme_is_not_parsed(): void {
 		$this->mock_plugin_headers();
 		WP_Mock::userFunction( 'get_bloginfo' )->with( 'version' )->andReturn( '6.5.3' );
 		touch( $this->plugins_directory . '/my-plugin/readme.txt' );
 
-		$sut = $this->get_sut(
-			array(
-				'sections' => array(
-					'description' => 'It is **bold**.',
-					'changelog'   => "* First\n* Second",
-				),
-			),
-		);
+		$result = $this->add_tabs( $this->get_sut() );
 
-		$result = $this->add_tabs( $sut );
-
-		$this->assertSame(
-			array(
-				'description' => '<p>It is <strong>bold</strong>.</p>',
-				'changelog'   => "<ul>\n<li>First</li>\n<li>Second</li>\n</ul>",
-			),
-			$result['sections'],
-		);
+		$this->assertArrayNotHasKey( 'requires', $result );
 	}
 
 	/**
@@ -256,16 +301,19 @@ class Plugins_Page_View_Details_Modal_Readme_Unit_Test extends Unit_Testcase {
 	public function test_readme_is_found_whatever_its_capitalisation( string $readme_filename ): void {
 		$this->mock_plugin_headers();
 		WP_Mock::userFunction( 'get_bloginfo' )->with( 'version' )->andReturn( '6.5.3' );
-		touch( $this->plugins_directory . '/my-plugin/' . $readme_filename );
+		$this->put_readme( $readme_filename );
 
-		$sut = $this->get_sut( array( 'requires' => '6.2' ) );
+		$sut = $this->get_sut( new Readme( requires: '6.2' ) );
+
+		// The path is checked too: on a case-insensitive filesystem the file is read whichever spelling is tried.
+		$get_readme_path = new ReflectionMethod( $sut, 'get_readme_path' );
+		$this->assertSame(
+			$this->plugins_directory . '/my-plugin/' . $readme_filename,
+			$get_readme_path->invoke( $sut ),
+		);
 
 		$result = $this->add_tabs( $sut );
 
-		$this->assertSame(
-			$this->plugins_directory . '/my-plugin/' . $readme_filename,
-			$this->parsed_readme_path,
-		);
 		$this->assertSame( '6.2', $result['requires'] );
 	}
 
@@ -278,11 +326,8 @@ class Plugins_Page_View_Details_Modal_Readme_Unit_Test extends Unit_Testcase {
 		touch( $this->plugins_directory . '/my-plugin/changelog.txt' );
 		touch( $this->plugins_directory . '/my-plugin/readme.txt.bak' );
 
-		$sut = $this->get_sut( array( 'requires' => '6.2' ) );
+		$result = $this->add_tabs( $this->get_sut() );
 
-		$result = $this->add_tabs( $sut );
-
-		$this->assertNull( $this->parsed_readme_path );
 		$this->assertArrayNotHasKey( 'requires', $result );
 	}
 
@@ -295,9 +340,9 @@ class Plugins_Page_View_Details_Modal_Readme_Unit_Test extends Unit_Testcase {
 	public function test_tested_up_to_the_same_minor_version_is_reported_as_the_running_version(): void {
 		$this->mock_plugin_headers();
 		WP_Mock::userFunction( 'get_bloginfo' )->with( 'version' )->andReturn( '6.5.3' );
-		touch( $this->plugins_directory . '/my-plugin/readme.txt' );
+		$this->put_readme();
 
-		$result = $this->add_tabs( $this->get_sut( array( 'tested' => '6.5' ) ) );
+		$result = $this->add_tabs( $this->get_sut( new Readme( tested: '6.5' ) ) );
 
 		$this->assertSame( '6.5.3', $result['tested'] );
 	}
@@ -308,9 +353,9 @@ class Plugins_Page_View_Details_Modal_Readme_Unit_Test extends Unit_Testcase {
 	public function test_tested_up_to_an_older_minor_version_is_not_changed(): void {
 		$this->mock_plugin_headers();
 		WP_Mock::userFunction( 'get_bloginfo' )->with( 'version' )->andReturn( '6.5.3' );
-		touch( $this->plugins_directory . '/my-plugin/readme.txt' );
+		$this->put_readme();
 
-		$result = $this->add_tabs( $this->get_sut( array( 'tested' => '6.4' ) ) );
+		$result = $this->add_tabs( $this->get_sut( new Readme( tested: '6.4' ) ) );
 
 		$this->assertSame( '6.4', $result['tested'] );
 	}

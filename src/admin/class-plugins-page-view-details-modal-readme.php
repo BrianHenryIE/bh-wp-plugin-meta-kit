@@ -9,11 +9,11 @@ declare( strict_types = 1 );
 
 namespace BrianHenryIE\Plugin_Meta_Kit\Admin;
 
+use BrianHenryIE\Plugin_Meta_Kit\Model\Readme;
 use BrianHenryIE\Plugin_Meta_Kit\Plugin_Meta_Kit;
 use BrianHenryIE\Plugin_Meta_Kit\Plugin_Meta_Kit_Settings;
-use Parsedown;
+use BrianHenryIE\Plugin_Meta_Kit\Readme_Parser;
 use stdClass;
-use WordPressdotorg\Plugin_Directory\Readme\Parser as ReadmeParser;
 
 /**
  * Fills the plugin details modal with the plugin's headers and the contents of its readme.
@@ -22,10 +22,12 @@ class Plugins_Page_View_Details_Modal_Readme {
 	/**
 	 * Constructor.
 	 *
-	 * @param Plugin_Meta_Kit_Settings $settings The meta kit settings.
+	 * @param Plugin_Meta_Kit_Settings $settings      The meta kit settings.
+	 * @param Readme_Parser            $readme_parser Parses the plugin's readme.
 	 */
 	public function __construct(
 		protected Plugin_Meta_Kit_Settings $settings,
+		protected Readme_Parser $readme_parser,
 	) {
 	}
 
@@ -79,7 +81,7 @@ class Plugins_Page_View_Details_Modal_Readme {
 
 		$root_plugin_file_headers = get_plugins()[ $this->settings->plugin_basename ] ?? array();
 
-		$fields = array_merge( $fields, $root_plugin_file_headers, $this->get_readme( $readme_path ) );
+		$fields = array_merge( $fields, $root_plugin_file_headers, $this->get_readme_fields( $readme_path ) );
 
 		// Lie and say the plugin has been tested on patch versions of WordPress.
 		// Otherwise a banner is displayed: "Warning: This plugin has not been tested with your current version of WordPress."
@@ -96,20 +98,6 @@ class Plugins_Page_View_Details_Modal_Readme {
 			&& $wp_minor_version[1] === $plugin_minor_version[1]
 		) {
 			$fields['tested'] = $wordpress_version;
-		}
-
-		$sections = $fields['sections'] ?? $existing_fields['sections'] ?? array();
-
-		if ( is_array( $sections ) ) {
-			$parsedown = new Parsedown();
-
-			foreach ( $sections as $name => $section ) {
-				if ( is_string( $section ) ) {
-					$sections[ $name ] = $parsedown->text( $section );
-				}
-			}
-
-			$fields['sections'] = $sections;
 		}
 
 		return $this->set_fields( $result, $fields );
@@ -155,13 +143,66 @@ class Plugins_Page_View_Details_Modal_Readme {
 	}
 
 	/**
-	 * Parse the readme.
+	 * Parse the readme into the plugin information fields core's modal prints.
+	 *
+	 * Empty values are left out, so they do not replace what an earlier filter set.
 	 *
 	 * @param string $readme_path The readme's path.
 	 *
-	 * @return array<mixed> The parser's public properties, by name: `requires`, `tested`, `sections`, etc.
+	 * @return array<string, mixed>
 	 */
-	protected function get_readme( string $readme_path ): array {
-		return get_object_vars( new ReadmeParser( $readme_path ) );
+	protected function get_readme_fields( string $readme_path ): array {
+		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents -- A local file; WP_Filesystem is for writing.
+		$readme_contents = file_get_contents( $readme_path );
+
+		if ( false === $readme_contents || '' === $readme_contents ) {
+			return array();
+		}
+
+		$readme = $this->readme_parser->parse( $readme_contents );
+
+		$fields = array(
+			'name'              => $readme->name,
+			'requires'          => $readme->requires,
+			'tested'            => $readme->tested,
+			'requires_php'      => $readme->requires_php,
+			'donate_link'       => $readme->donate_link,
+			'short_description' => $readme->short_description,
+			'sections'          => $readme->sections,
+			'upgrade_notice'    => $readme->upgrade_notices,
+			'contributors'      => $this->get_contributors( $readme ),
+		);
+
+		return array_filter( $fields, fn ( $value ): bool => '' !== $value && array() !== $value );
+	}
+
+	/**
+	 * The readme's contributors, in the shape core's modal prints: WordPress.org username to profile details.
+	 *
+	 * @see install_plugin_information()
+	 *
+	 * @param Readme $readme The parsed readme.
+	 *
+	 * @return array<string, array{display_name: string, profile: string, avatar: string}>
+	 */
+	protected function get_contributors( Readme $readme ): array {
+		$contributors = array();
+
+		if ( array() === $readme->contributors ) {
+			return $contributors;
+		}
+
+		// The readme does not say who the contributors are beyond their usernames, so each gets the site's default avatar.
+		$default_avatar_url = get_avatar_url( '', array( 'force_default' => true ) );
+
+		foreach ( $readme->contributors as $username ) {
+			$contributors[ $username ] = array(
+				'display_name' => $username,
+				'profile'      => 'https://profiles.wordpress.org/' . rawurlencode( $username ) . '/',
+				'avatar'       => is_string( $default_avatar_url ) ? $default_avatar_url : '',
+			);
+		}
+
+		return $contributors;
 	}
 }

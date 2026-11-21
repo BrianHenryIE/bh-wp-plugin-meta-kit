@@ -45,6 +45,13 @@ test.describe( 'plugin details modal readme', () => {
 		await expect( requirements ).toContainText( 'Compatible up to: 6.5' );
 	} );
 
+	test( 'lists the readme contributors, linked to their WordPress.org profiles', async () => {
+		const contributor = modal.locator( '.contributors' ).getByRole( 'link', { name: 'brianhenryie' } );
+
+		await expect( contributor ).toBeVisible();
+		await expect( contributor ).toHaveAttribute( 'href', 'https://profiles.wordpress.org/brianhenryie/' );
+	} );
+
 	test( 'does not warn that the plugin is untested on a patch release of the tested version', async () => {
 		await expect( modal.locator( '#section-holder' ) ).toBeVisible();
 		await expect( modal.getByText( 'has not been tested with your current version of WordPress' ) ).toHaveCount( 0 );
@@ -66,7 +73,9 @@ test.describe( 'plugin details modal readme', () => {
 		const changelog = modal.locator( '#section-changelog' );
 
 		await expect( changelog ).toBeVisible();
-		await expect( changelog ).toContainText( '1.0.0' );
-		await expect( changelog ).toContainText( 'First version of the development plugin.' );
+		// `= 1.0.0 =` is readme.txt's heading syntax, which must be rendered, not printed.
+		await expect( changelog.getByRole( 'heading', { name: '1.0.0', exact: true } ) ).toBeVisible();
+		await expect( changelog ).not.toContainText( '= 1.0.0 =' );
+		await expect( changelog.locator( 'li' ) ).toHaveText( 'First version of the development plugin.' );
 	} );
 } );
