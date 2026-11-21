@@ -9,10 +9,12 @@
  *
  * Other test files visit the settings screen while these run, which counts as a visit. Where a test needs the notice
  * to be showing, it says the plugin was activated a moment in the future, which no visit can be later than.
+ *
+ * Not a spec file itself: it is run from `../admin-notices.spec.ts`.
  */
 import { test, expect } from '@wordpress/e2e-test-utils-playwright';
 import type { Locator, Page } from '@playwright/test';
-import { loginAsAdmin } from '../helpers/ui/login';
+import { loginAsAdmin } from '../../helpers/ui/login';
 
 const pluginName = 'BH Plugin Meta Kit Development/Test/Demo plugin';
 
@@ -23,8 +25,6 @@ const now = (): number => Math.floor( Date.now() / 1000 );
 
 const hour = 60 * 60;
 const day = 24 * hour;
-
-test.describe.configure( { mode: 'serial' } );
 
 test.describe( 'activation admin notice', () => {
 	/**

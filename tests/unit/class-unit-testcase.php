@@ -23,9 +23,7 @@ class Unit_Testcase extends Unit {
 		WP_Mock::userFunction(
 			'wp_json_encode',
 			array(
-				'return' => function ( $value ) {
-					return json_encode( $value );
-				},
+				'return' => json_encode( ... ),
 			),
 		);
 

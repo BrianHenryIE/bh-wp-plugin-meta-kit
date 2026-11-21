@@ -20,6 +20,8 @@ use stdClass;
  * Fills the plugin details modal with the plugin's headers and the contents of its readme.
  */
 class Plugins_Page_View_Details_Modal_Readme {
+	use Plugin_Information_Fields;
+
 	/**
 	 * Constructor.
 	 *
@@ -133,20 +135,6 @@ class Plugins_Page_View_Details_Modal_Readme {
 		}
 
 		return $fields;
-	}
-
-	/**
-	 * Set each field as a property of the plugin information.
-	 *
-	 * @param object       $result The plugin information being built.
-	 * @param array<mixed> $fields The properties to set, by name.
-	 */
-	protected function set_fields( object $result, array $fields ): object {
-		foreach ( $fields as $key => $value ) {
-			$result->$key = $value;
-		}
-
-		return $result;
 	}
 
 	/**

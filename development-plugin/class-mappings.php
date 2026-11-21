@@ -34,6 +34,12 @@ class Mappings {
 		 */
 		global $wp_plugin_paths;
 		$plugin_path = '/var/www/html/wp-content/uploads/development-plugin/';
+
+		if ( ! is_array( $wp_plugin_paths ) ) {
+			// phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited -- WordPress sets it to an array; this only guards against it not having been.
+			$wp_plugin_paths = array();
+		}
+
 		// phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited -- Adding an entry to the global is how a mapped plugin directory is registered.
 		$wp_plugin_paths[ WP_PLUGIN_DIR . '/development-plugin/' ] = $plugin_path;
 	}

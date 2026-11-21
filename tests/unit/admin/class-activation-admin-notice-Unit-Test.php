@@ -254,18 +254,18 @@ class Activation_Admin_Notice_Unit_Test extends Unit_Testcase {
 	 */
 	public static function other_screens(): array {
 		return array(
-			'another page of the same file'    => array(
+			'another page of the same file' => array(
 				'admin.php',
 				array(
 					'page' => 'another-plugin',
-					'tab' => 'general',
+					'tab'  => 'general',
 				),
 			),
-			'another tab of the same page'     => array(
+			'another tab of the same page' => array(
 				'admin.php',
 				array(
 					'page' => 'my-plugin',
-					'tab' => 'advanced',
+					'tab'  => 'advanced',
 				),
 			),
 			'the page without the tab'         => array( 'admin.php', array( 'page' => 'my-plugin' ) ),
@@ -273,7 +273,7 @@ class Activation_Admin_Notice_Unit_Test extends Unit_Testcase {
 				'options-general.php',
 				array(
 					'page' => 'my-plugin',
-					'tab' => 'general',
+					'tab'  => 'general',
 				),
 			),
 		);

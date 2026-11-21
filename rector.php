@@ -15,6 +15,9 @@ use Rector\Php81\Rector\Array_\ArrayToFirstClassCallableRector;
 return RectorConfig::configure()
 	->withPaths(
 		array(
+			__DIR__ . '/bootstrap.php',
+			__DIR__ . '/bootstrap2.php',
+			__DIR__ . '/development-plugin',
 			__DIR__ . '/src',
 			__DIR__ . '/tests/unit',
 			__DIR__ . '/tests/wpunit',
@@ -28,7 +31,7 @@ return RectorConfig::configure()
 		)
 	)
 	->withPhpSets(
-		php80: true,
+		php84: true,
 	)
 	->withPreparedSets(
 		deadCode: false,

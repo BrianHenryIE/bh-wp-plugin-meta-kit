@@ -23,6 +23,8 @@ use Syntatis\WPPluginReadMeParser\Markdown;
  * one file is often updated and the other forgotten. Without a `CHANGELOG.md` the readme's changelog is left as it is.
  */
 class Plugins_Page_View_Details_Modal_Tab_Changelog {
+	use Plugin_Information_Fields;
+
 	/**
 	 * Constructor.
 	 *
@@ -76,20 +78,6 @@ class Plugins_Page_View_Details_Modal_Tab_Changelog {
 		$sections['changelog'] = $this->get_changelog_html( $changelog_entries );
 
 		return $this->set_fields( $result, array( 'sections' => $sections ) );
-	}
-
-	/**
-	 * Set each field as a property of the plugin information, which is whatever class the earlier filter made it.
-	 *
-	 * @param object       $result The plugin information being built.
-	 * @param array<mixed> $fields The properties to set, by name.
-	 */
-	protected function set_fields( object $result, array $fields ): object {
-		foreach ( $fields as $key => $value ) {
-			$result->$key = $value;
-		}
-
-		return $result;
 	}
 
 	/**

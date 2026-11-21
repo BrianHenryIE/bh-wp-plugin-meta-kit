@@ -5,10 +5,12 @@
  * The development plugin declares one dependency, whose check reads the `development_plugin_missing_dependency`
  * option. The tests set it through the core settings REST endpoint, and reset dismissals through the development
  * plugin's REST route. The tests share that state, so they run one at a time.
+ *
+ * Not a spec file itself: it is run from `../admin-notices.spec.ts`.
  */
 import { test, expect } from '@wordpress/e2e-test-utils-playwright';
 import type { Locator, Page } from '@playwright/test';
-import { loginAsAdmin } from '../helpers/ui/login';
+import { loginAsAdmin } from '../../helpers/ui/login';
 
 const pluginName = 'BH Plugin Meta Kit Development/Test/Demo plugin';
 const dependencyName = 'GMP (GNU Multiple Precision Arithmetic Library) PHP extension';
@@ -28,8 +30,6 @@ const dismissNotice = async ( page: Page ): Promise< void > => {
 
 	await dismissalSaved;
 };
-
-test.describe.configure( { mode: 'serial' } );
 
 test.describe( 'dependencies notice', () => {
 	test.beforeEach( async ( { requestUtils, page } ) => {

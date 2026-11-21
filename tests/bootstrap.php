@@ -25,9 +25,8 @@ Autoloader::generate(
 )->register();
 
 // If there is a secrets file, load it here.
-$env_secret_fullpath = codecept_root_dir( '.env.secret' );
-if ( file_exists( $env_secret_fullpath ) ) {
-	$dotenv = Dotenv\Dotenv::createImmutable( codecept_root_dir(), '.env.secret' );
+if ( file_exists( $project_root_dir . '/.env.secret' ) ) {
+	$dotenv = Dotenv\Dotenv::createImmutable( $project_root_dir, '.env.secret' );
 	$dotenv->load();
 }
 
@@ -36,7 +35,12 @@ if ( file_exists( $env_secret_fullpath ) ) {
  *
  * @see WPLoader::includeCorePHPUniteSuiteBootstrapFile()
  */
-$is_phpstorm = array_reduce( $GLOBALS['argv'], fn ( bool $carry, string $arg ) => $carry || str_contains( $arg, 'PhpStorm' ), false );
+$command_line_arguments = is_array( $GLOBALS['argv'] ?? null ) ? $GLOBALS['argv'] : array();
+$is_phpstorm            = array_reduce(
+	$command_line_arguments,
+	fn ( bool $carry, $argument ): bool => $carry || ( is_string( $argument ) && str_contains( $argument, 'PhpStorm' ) ),
+	false,
+);
 if ( $is_phpstorm ) {
 	define( 'WP_PHP_BINARY', PHP_BINARY );
 }

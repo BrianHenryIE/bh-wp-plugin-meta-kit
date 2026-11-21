@@ -41,7 +41,7 @@ class Readme_Parser extends Parser {
 			tested: (string) $this->tested,
 			requires_php: (string) $this->requires_php,
 			stable_tag: (string) $this->stable_tag,
-			contributors: array_values( array_filter( $this->contributors, 'is_string' ) ),
+			contributors: array_values( array_filter( $this->contributors, is_string( ... ) ) ),
 			donate_link: (string) $this->donate_link,
 			short_description: (string) $this->short_description,
 			sections: $this->strings_by_key( $this->sections ),
