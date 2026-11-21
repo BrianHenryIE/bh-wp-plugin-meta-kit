@@ -10,6 +10,7 @@ declare( strict_types = 1 );
 namespace BrianHenryIE\Plugin_Meta_Kit\Admin;
 
 use BrianHenryIE\Plugin_Meta_Kit\Model\Readme;
+use BrianHenryIE\Plugin_Meta_Kit\Plugin_File_Finder;
 use BrianHenryIE\Plugin_Meta_Kit\Plugin_Meta_Kit;
 use BrianHenryIE\Plugin_Meta_Kit\Plugin_Meta_Kit_Settings;
 use BrianHenryIE\Plugin_Meta_Kit\Readme_Parser;
@@ -22,12 +23,14 @@ class Plugins_Page_View_Details_Modal_Readme {
 	/**
 	 * Constructor.
 	 *
-	 * @param Plugin_Meta_Kit_Settings $settings      The meta kit settings.
-	 * @param Readme_Parser            $readme_parser Parses the plugin's readme.
+	 * @param Plugin_Meta_Kit_Settings $settings           The meta kit settings.
+	 * @param Readme_Parser            $readme_parser      Parses the plugin's readme.
+	 * @param Plugin_File_Finder       $plugin_file_finder Finds the readme in the plugin's directory.
 	 */
 	public function __construct(
 		protected Plugin_Meta_Kit_Settings $settings,
 		protected Readme_Parser $readme_parser,
+		protected Plugin_File_Finder $plugin_file_finder,
 	) {
 	}
 
@@ -149,26 +152,10 @@ class Plugins_Page_View_Details_Modal_Readme {
 	/**
 	 * Find the plugin's readme, whose name plugins capitalise differently: `readme.txt`, `README.txt`, `Readme.txt`.
 	 *
-	 * The directory is listed, rather than each spelling tried, because filesystems differ on case-sensitivity.
-	 *
 	 * @return ?string The readme's path, or null when the plugin has none.
 	 */
 	protected function get_readme_path(): ?string {
-		$plugin_directory = constant( 'WP_PLUGIN_DIR' ) . '/' . $this->settings->plugin_slug;
-
-		if ( ! is_dir( $plugin_directory ) ) {
-			return null;
-		}
-
-		foreach ( scandir( $plugin_directory ) ?: array() as $filename ) {
-			$file_path = $plugin_directory . '/' . $filename;
-
-			if ( 0 === strcasecmp( 'readme.txt', $filename ) && is_file( $file_path ) && is_readable( $file_path ) ) {
-				return $file_path;
-			}
-		}
-
-		return null;
+		return $this->plugin_file_finder->find( 'readme.txt' );
 	}
 
 	/**

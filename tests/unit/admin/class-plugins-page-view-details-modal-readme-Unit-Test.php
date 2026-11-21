@@ -5,6 +5,7 @@ declare( strict_types = 1 );
 namespace BrianHenryIE\Plugin_Meta_Kit\Admin;
 
 use BrianHenryIE\Plugin_Meta_Kit\Model\Readme;
+use BrianHenryIE\Plugin_Meta_Kit\Plugin_File_Finder;
 use BrianHenryIE\Plugin_Meta_Kit\Plugin_Meta_Kit_Settings;
 use BrianHenryIE\Plugin_Meta_Kit\Readme_Parser;
 use BrianHenryIE\Plugin_Meta_Kit\Unit_Testcase;
@@ -70,7 +71,11 @@ class Plugins_Page_View_Details_Modal_Readme_Unit_Test extends Unit_Testcase {
 				->andReturn( $readme );
 		}
 
-		return new Plugins_Page_View_Details_Modal_Readme( $this->get_settings(), $readme_parser );
+		return new Plugins_Page_View_Details_Modal_Readme(
+			$this->get_settings(),
+			$readme_parser,
+			new Plugin_File_Finder( $this->get_settings() ),
+		);
 	}
 
 	/**

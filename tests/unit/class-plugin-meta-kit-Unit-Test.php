@@ -6,6 +6,7 @@ namespace BrianHenryIE\Plugin_Meta_Kit;
 
 use BrianHenryIE\Plugin_Meta_Kit\Admin\Plugins_Page_View_Details_Modal;
 use BrianHenryIE\Plugin_Meta_Kit\Admin\Plugins_Page_View_Details_Modal_Readme;
+use BrianHenryIE\Plugin_Meta_Kit\Admin\Plugins_Page_View_Details_Modal_Tab_Changelog;
 use WP_Mock;
 use WP_Mock\Matcher\AnyInstance;
 
@@ -42,6 +43,13 @@ class Plugin_Meta_Kit_Unit_Test extends Unit_Testcase {
 			'plugins_api',
 			array( new AnyInstance( Plugins_Page_View_Details_Modal_Readme::class ), 'add_tabs' ),
 			10,
+			3,
+		);
+
+		WP_Mock::expectFilterAdded(
+			'plugins_api',
+			array( new AnyInstance( Plugins_Page_View_Details_Modal_Tab_Changelog::class ), 'add_changelog_tab' ),
+			11,
 			3,
 		);
 

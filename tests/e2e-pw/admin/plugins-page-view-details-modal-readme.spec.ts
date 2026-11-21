@@ -84,16 +84,4 @@ test.describe( 'plugin details modal readme', () => {
 		await expect( faq ).toContainText( 'Should I install this on a live site?' );
 		await expect( faq ).toContainText( 'No. It exists for developing and testing the library.' );
 	} );
-
-	test( 'shows the readme changelog on its own tab', async () => {
-		await modal.getByRole( 'link', { name: 'Changelog' } ).click();
-
-		const changelog = modal.locator( '#section-changelog' );
-
-		await expect( changelog ).toBeVisible();
-		// `= 1.0.0 =` is readme.txt's heading syntax, which must be rendered, not printed.
-		await expect( changelog.getByRole( 'heading', { name: '1.0.0', exact: true } ) ).toBeVisible();
-		await expect( changelog ).not.toContainText( '= 1.0.0 =' );
-		await expect( changelog.locator( 'li' ) ).toHaveText( 'First version of the development plugin.' );
-	} );
 } );

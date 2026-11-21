@@ -11,6 +11,7 @@ namespace BrianHenryIE\Plugin_Meta_Kit;
 
 use BrianHenryIE\Plugin_Meta_Kit\Admin\Plugins_Page_View_Details_Modal;
 use BrianHenryIE\Plugin_Meta_Kit\Admin\Plugins_Page_View_Details_Modal_Readme;
+use BrianHenryIE\Plugin_Meta_Kit\Admin\Plugins_Page_View_Details_Modal_Tab_Changelog;
 use DateTimeImmutable;
 
 /**
@@ -75,8 +76,28 @@ class Plugin_Meta_Kit {
 			3,
 		);
 
-		$plugin_details_tabs = new Plugins_Page_View_Details_Modal_Readme( $this->settings, new Readme_Parser() );
+		$plugin_file_finder = new Plugin_File_Finder( $this->settings );
+
+		$plugin_details_tabs = new Plugins_Page_View_Details_Modal_Readme(
+			$this->settings,
+			new Readme_Parser(),
+			$plugin_file_finder,
+		);
 		add_filter( 'plugins_api', array( $plugin_details_tabs, 'add_tabs' ), 10, 3 );
+
+		// After the readme, whose changelog it merges with `CHANGELOG.md`.
+		$changelog_tab = new Plugins_Page_View_Details_Modal_Tab_Changelog(
+			$this->settings,
+			$plugin_file_finder,
+			new Changelog_Parser(),
+			new Changelog_Merger(),
+		);
+		add_filter(
+			'plugins_api',
+			array( $changelog_tab, 'add_changelog_tab' ),
+			11,
+			3,
+		);
 	}
 
 	/**

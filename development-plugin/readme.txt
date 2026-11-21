@@ -27,3 +27,4 @@ No. It exists for developing and testing the library.
 
 = 1.0.0 =
 * First version of the development plugin.
+* This line is only in readme.txt
