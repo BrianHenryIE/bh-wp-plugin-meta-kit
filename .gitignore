@@ -66,6 +66,7 @@ quickstart-cli.php
 *.secret.*
 
 # Test artifacts
+patches.lock.json
 /test-results/
 /playwright-report/
 /blob-report/
@@ -75,3 +76,9 @@ quickstart-cli.php
 
 # Claude Code
 .claude/settings.local.json
+
+/.playwright-mcp
+
+# php-cs-fixer
+.php-cs-fixer.cache
+/tools/php-cs-fixer/vendor/

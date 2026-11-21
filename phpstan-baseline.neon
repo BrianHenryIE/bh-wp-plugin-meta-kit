@@ -1,0 +1,355 @@
+parameters:
+	ignoreErrors:
+		-
+			message: '#^Access to constant ACTIVATED_TIME_OPTION_KEY on an unknown class BrianHenryIE\\Plugin_Meta_Kit\\Admin\\Activator\.$#'
+			identifier: class.notFound
+			count: 1
+			path: src/admin/class-activation-admin-notice.php
+
+		-
+			message: '#^Found usage of constant DOING_AJAX\. Use wp_doing_ajax\(\) instead\.$#'
+			identifier: phpstanWP.wpConstant.fetch
+			count: 1
+			path: src/admin/class-activation-admin-notice.php
+
+		-
+			message: '#^Parameter \#1 \$array of function array_pop expects array, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/admin/class-activation-admin-notice.php
+
+		-
+			message: '#^Parameter \#1 \$option of function get_option expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/admin/class-activation-admin-notice.php
+
+		-
+			message: '#^Parameter \#1 \$value of function intval expects array\|bool\|float\|GMP\|int\|resource\|SimpleXMLElement\|string\|null, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/admin/class-activation-admin-notice.php
+
+		-
+			message: '#^Access to an undefined property BrianHenryIE\\Plugin_Meta_Kit\\Admin\\Dependencies_Notice\:\:\$api\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/admin/class-dependencies-notice.php
+
+		-
+			message: '#^Cannot call method is_server_has_dependencies\(\) on mixed\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: src/admin/class-dependencies-notice.php
+
+		-
+			message: '#^Argument of an invalid type mixed supplied for foreach, only iterables are supported\.$#'
+			identifier: foreach.nonIterable
+			count: 2
+			path: src/admin/class-plugins-page-view-details-modal-readme.php
+
+		-
+			message: '#^Cannot access offset mixed on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: src/admin/class-plugins-page-view-details-modal-readme.php
+
+		-
+			message: '#^Cannot access property \$Author on mixed\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: src/admin/class-plugins-page-view-details-modal-readme.php
+
+		-
+			message: '#^Cannot access property \$AuthorName on mixed\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: src/admin/class-plugins-page-view-details-modal-readme.php
+
+		-
+			message: '#^Cannot access property \$AuthorURI on mixed\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: src/admin/class-plugins-page-view-details-modal-readme.php
+
+		-
+			message: '#^Cannot access property \$Description on mixed\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: src/admin/class-plugins-page-view-details-modal-readme.php
+
+		-
+			message: '#^Cannot access property \$DomainPath on mixed\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: src/admin/class-plugins-page-view-details-modal-readme.php
+
+		-
+			message: '#^Cannot access property \$Name on mixed\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: src/admin/class-plugins-page-view-details-modal-readme.php
+
+		-
+			message: '#^Cannot access property \$Network on mixed\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: src/admin/class-plugins-page-view-details-modal-readme.php
+
+		-
+			message: '#^Cannot access property \$PluginURI on mixed\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: src/admin/class-plugins-page-view-details-modal-readme.php
+
+		-
+			message: '#^Cannot access property \$RequiresPHP on mixed\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: src/admin/class-plugins-page-view-details-modal-readme.php
+
+		-
+			message: '#^Cannot access property \$RequiresPlugins on mixed\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: src/admin/class-plugins-page-view-details-modal-readme.php
+
+		-
+			message: '#^Cannot access property \$RequiresWP on mixed\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: src/admin/class-plugins-page-view-details-modal-readme.php
+
+		-
+			message: '#^Cannot access property \$TextDomain on mixed\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: src/admin/class-plugins-page-view-details-modal-readme.php
+
+		-
+			message: '#^Cannot access property \$Title on mixed\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: src/admin/class-plugins-page-view-details-modal-readme.php
+
+		-
+			message: '#^Cannot access property \$UpdateURI on mixed\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: src/admin/class-plugins-page-view-details-modal-readme.php
+
+		-
+			message: '#^Cannot access property \$Version on mixed\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: src/admin/class-plugins-page-view-details-modal-readme.php
+
+		-
+			message: '#^Cannot access property \$name on mixed\.$#'
+			identifier: property.nonObject
+			count: 2
+			path: src/admin/class-plugins-page-view-details-modal-readme.php
+
+		-
+			message: '#^Cannot access property \$sections on mixed\.$#'
+			identifier: property.nonObject
+			count: 4
+			path: src/admin/class-plugins-page-view-details-modal-readme.php
+
+		-
+			message: '#^Cannot access property \$slug on mixed\.$#'
+			identifier: property.nonObject
+			count: 2
+			path: src/admin/class-plugins-page-view-details-modal-readme.php
+
+		-
+			message: '#^Cannot access property \$tested on mixed\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: src/admin/class-plugins-page-view-details-modal-readme.php
+
+		-
+			message: '#^Method BrianHenryIE\\Plugin_Meta_Kit\\Admin\\Plugins_Page_View_Details_Modal_Readme\:\:add_tabs\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: src/admin/class-plugins-page-view-details-modal-readme.php
+
+		-
+			message: '#^Method BrianHenryIE\\Plugin_Meta_Kit\\Admin\\Plugins_Page_View_Details_Modal_Readme\:\:add_tabs\(\) has parameter \$res with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: src/admin/class-plugins-page-view-details-modal-readme.php
+
+		-
+			message: '#^Method BrianHenryIE\\Plugin_Meta_Kit\\Admin\\Plugins_Page_View_Details_Modal_Readme\:\:get_readme\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: src/admin/class-plugins-page-view-details-modal-readme.php
+
+		-
+			message: '#^Method BrianHenryIE\\Plugin_Meta_Kit\\Admin\\Plugins_Page_View_Details_Modal_Readme\:\:get_readme\(\) has parameter \$readme_path with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: src/admin/class-plugins-page-view-details-modal-readme.php
+
+		-
+			message: '#^PHPDoc tag @param references unknown parameter\: \$result$#'
+			identifier: parameter.notFound
+			count: 1
+			path: src/admin/class-plugins-page-view-details-modal-readme.php
+
+		-
+			message: '#^Parameter \#1 \$string of class WordPressdotorg\\Plugin_Directory\\Readme\\Parser constructor expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/admin/class-plugins-page-view-details-modal-readme.php
+
+		-
+			message: '#^Parameter \#2 \$subject of function preg_match expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/admin/class-plugins-page-view-details-modal-readme.php
+
+		-
+			message: '#^Variable \$args in empty\(\) always exists and is not falsy\.$#'
+			identifier: empty.variable
+			count: 1
+			path: src/admin/class-plugins-page-view-details-modal-readme.php
+
+		-
+			message: '#^Binary operation "\." between mixed and ''/'' results in an error\.$#'
+			identifier: binaryOp.invalid
+			count: 1
+			path: src/admin/class-plugins-page-view-details-modal-tab-changelog.php
+
+		-
+			message: '#^Cannot access offset ''changelog'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: src/admin/class-plugins-page-view-details-modal-tab-changelog.php
+
+		-
+			message: '#^Cannot access property \$sections on mixed\.$#'
+			identifier: property.nonObject
+			count: 3
+			path: src/admin/class-plugins-page-view-details-modal-tab-changelog.php
+
+		-
+			message: '#^Method BrianHenryIE\\Plugin_Meta_Kit\\Admin\\Plugins_Page_View_Details_Modal_Tab_Changelog\:\:add_changelog_tab\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: src/admin/class-plugins-page-view-details-modal-tab-changelog.php
+
+		-
+			message: '#^Method BrianHenryIE\\Plugin_Meta_Kit\\Admin\\Plugins_Page_View_Details_Modal_Tab_Changelog\:\:add_changelog_tab\(\) has parameter \$res with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: src/admin/class-plugins-page-view-details-modal-tab-changelog.php
+
+		-
+			message: '#^PHPDoc tag @param references unknown parameter\: \$result$#'
+			identifier: parameter.notFound
+			count: 1
+			path: src/admin/class-plugins-page-view-details-modal-tab-changelog.php
+
+		-
+			message: '#^Variable \$args in empty\(\) always exists and is not falsy\.$#'
+			identifier: empty.variable
+			count: 1
+			path: src/admin/class-plugins-page-view-details-modal-tab-changelog.php
+
+		-
+			message: '#^Access to an undefined property object\:\:\$no_update\.$#'
+			identifier: property.notFound
+			count: 1
+			path: src/admin/class-plugins-page-view-details-modal.php
+
+		-
+			message: '#^Cannot access offset string on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: src/admin/class-plugins-page-view-details-modal.php
+
+		-
+			message: '#^Cannot access property \$name on mixed\.$#'
+			identifier: property.nonObject
+			count: 2
+			path: src/admin/class-plugins-page-view-details-modal.php
+
+		-
+			message: '#^Cannot access property \$sections on mixed\.$#'
+			identifier: property.nonObject
+			count: 2
+			path: src/admin/class-plugins-page-view-details-modal.php
+
+		-
+			message: '#^Cannot access property \$slug on mixed\.$#'
+			identifier: property.nonObject
+			count: 2
+			path: src/admin/class-plugins-page-view-details-modal.php
+
+		-
+			message: '#^Method BrianHenryIE\\Plugin_Meta_Kit\\Admin\\Plugins_Page_View_Details_Modal\:\:add_tabs\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: src/admin/class-plugins-page-view-details-modal.php
+
+		-
+			message: '#^Method BrianHenryIE\\Plugin_Meta_Kit\\Admin\\Plugins_Page_View_Details_Modal\:\:add_tabs\(\) has parameter \$res with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: src/admin/class-plugins-page-view-details-modal.php
+
+		-
+			message: '#^PHPDoc tag @param references unknown parameter\: \$result$#'
+			identifier: parameter.notFound
+			count: 1
+			path: src/admin/class-plugins-page-view-details-modal.php
+
+		-
+			message: '#^Variable \$args in empty\(\) always exists and is not falsy\.$#'
+			identifier: empty.variable
+			count: 1
+			path: src/admin/class-plugins-page-view-details-modal.php
+
+		-
+			message: '#^Method BrianHenryIE\\Plugin_Meta_Kit\\Plugin_Meta_Kit_Settings_Interface@anonymous/src/class\-plugin\-meta\-kit\.php\:31\:\:get_plugin_name\(\) should return string but returns mixed\.$#'
+			identifier: return.type
+			count: 1
+			path: src/class-plugin-meta-kit.php
+
+		-
+			message: '#^Property BrianHenryIE\\Plugin_Meta_Kit\\Plugin_Meta_Kit_Settings_Interface@anonymous/src/class\-plugin\-meta\-kit\.php\:31\:\:\$plugin_basename \(string\) does not accept int\|string\|null\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/class-plugin-meta-kit.php
+
+		-
+			message: '#^Property BrianHenryIE\\Plugin_Meta_Kit\\Plugin_Meta_Kit_Settings_Interface@anonymous/src/class\-plugin\-meta\-kit\.php\:31\:\:\$root_plugin_file_headers type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/class-plugin-meta-kit.php
+
+		-
+			message: '#^Static method BrianHenryIE\\Plugin_Meta_Kit\\Plugin_Meta_Kit\:\:initialize\(\) invoked with 1 parameter, 0 required\.$#'
+			identifier: arguments.count
+			count: 1
+			path: src/class-plugin-meta-kit.php
+
+		-
+			message: '#^Parameter \#1 \$array of function array_reduce expects array\<string\>, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: tests/bootstrap.php
+
+		-
+			message: '#^Parameter \#1 \$filename of function file_exists expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: tests/bootstrap.php
+
+		-
+			message: '#^Parameter \#1 \$paths of static method Dotenv\\Dotenv\:\:createImmutable\(\) expects array\<string\>\|string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: tests/bootstrap.php

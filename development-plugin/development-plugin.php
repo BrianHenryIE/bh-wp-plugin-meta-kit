@@ -9,7 +9,7 @@
  * @package brianhenryie/bh-wp-plugin-meta-kit
  */
 
-declare(strict_types=1);
+declare( strict_types = 1 );
 
 namespace BrianHenryIE\Plugin_Meta_Kit\Development_Plugin;
 

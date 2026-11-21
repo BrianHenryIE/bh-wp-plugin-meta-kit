@@ -10,11 +10,19 @@
     }
   ],
   "autoload": {
-    "classmap": ["src"],
-    "files": ["bootstrap.php"]
+    "classmap": [
+      "src"
+    ],
+    "files": [
+      "bootstrap.php"
+    ]
   },
   "autoload-dev": {
-    "classmap": ["tests/unit","tests/wpunit"]
+    "classmap": [
+      "tests/_support",
+      "tests/unit",
+      "tests/wpunit"
+    ]
   },
   "minimum-stability": "dev",
   "prefer-stable": true,
@@ -26,7 +34,8 @@
       "cweagans/composer-patches": true,
       "dealerdirect/phpcodesniffer-composer-installer": true,
       "johnpbloch/wordpress-core-installer": true,
-      "phpstan/extension-installer": true
+      "phpstan/extension-installer": true,
+      "alleyinteractive/composer-wordpress-autoloader": false
     }
   },
   "repositories": {
@@ -47,8 +56,10 @@
   },
   "require-dev": {
     "10up/wp_mock": "^1.0",
+    "alleyinteractive/composer-wordpress-autoloader": "^1.0",
     "antecedent/patchwork": "^2.1",
     "brianhenryie/color-logger": "^1.0",
+    "brianhenryie/php-codecoverage-markdown": "^0.2.0",
     "brianhenryie/php-diff-test": "*",
     "cweagans/composer-patches": "*",
     "dealerdirect/phpcodesniffer-composer-installer": "^1.0",
@@ -60,7 +71,10 @@
     "phpcompatibility/phpcompatibility-wp": "*",
     "phpstan/extension-installer": "*",
     "phpstan/phpstan": "*",
+    "phpstan/phpstan-mockery": "^2.0",
+    "phpstan/phpstan-phpunit": "^2.1",
     "phpunit/phpcov": "*",
+    "rector/rector": "^2.8",
     "squizlabs/php_codesniffer": "*",
     "szepeviktor/phpstan-wordpress": "*",
     "wordpress/wordpress": "*",
@@ -73,6 +87,45 @@
     "post-autoload-dump": [
       "php ./bin/sync-composer-wpenv.php",
       "php ./bin/wpenv-mappings-to-phpstorm.php"
+    ],
+    "test": [
+      "codecept run unit",
+      "codecept run wpunit"
+    ],
+    "test-coverage": [
+      "codecept run unit --coverage unit.cov",
+      "codecept run wpunit --coverage wpunit.cov",
+      "phpcov merge --clover tests/_output/clover.xml --html tests/_output/html tests/_output;",
+      "open tests/_output/html/index.html"
+    ],
+    "cs": [
+      "phpcs || true",
+      "phpstan analyse --memory-limit 4G",
+      "@no-inline-scripts"
+    ],
+    "no-inline-scripts": [
+      "! grep -rn --include=*.php '<script' src bootstrap.php || ( echo 'PHP must not print <script> tags: enqueue a file and pass data with wp_add_inline_script( ..., \"before\" ).' && exit 1 )"
+    ],
+    "cs-fix": [
+      "@php-cs-fixer",
+      "phpcbf || true",
+      "phpstan analyse --level max --memory-limit 4G --fix || true",
+      "phpcs || true",
+      "@no-inline-scripts"
+    ],
+    "php-cs-fixer": [
+      "[ -x tools/php-cs-fixer/vendor/bin/php-cs-fixer ] || composer install --working-dir=tools/php-cs-fixer",
+      "tools/php-cs-fixer/vendor/bin/php-cs-fixer fix"
+    ],
+    "cs-strict": [
+      "phpcs || true",
+      "phpstan analyse --level max --memory-limit 4G"
+    ],
+    "cs-changes": [
+      "updated_files=$(echo $(git diff --name-only `git merge-base origin/master HEAD` | grep \\.php | tr '\\n' '\\0' | xargs -0 ls -1df 2>/dev/null)); if [ -n \"$updated_files\" ]; then tools/php-cs-fixer/vendor/bin/php-cs-fixer fix --path-mode=intersection $(echo $updated_files); phpcbf $(echo $updated_files); phpcs $(echo $updated_files); phpstan analyse $(echo $updated_files) --memory-limit 1G; else echo \"No modified php files for phpstan.\"; fi;"
+    ],
+    "cs-changes-strict": [
+      "updated_files=$(echo $(git diff --name-only `git merge-base origin/master HEAD` | grep \\.php | tr '\\n' '\\0' | xargs -0 ls -1df 2>/dev/null)); if [ -n \"$updated_files\" ]; then tools/php-cs-fixer/vendor/bin/php-cs-fixer fix --path-mode=intersection $(echo $updated_files); phpcbf $(echo $updated_files); phpcs $(echo $updated_files); phpstan analyse $(echo $updated_files) --level max --memory-limit 1G; else echo \"No modified php files for phpstan.\"; fi;"
     ]
   }
 }
