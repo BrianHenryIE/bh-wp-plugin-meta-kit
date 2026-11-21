@@ -14,7 +14,7 @@ on:
       - '**.txt'
 
 env:
-  COVERAGE_PHP_VERSION: '8.2'
+  COVERAGE_PHP_VERSION: '8.4'
 
 jobs:
   php-tests:
@@ -35,8 +35,10 @@ jobs:
       contents: write
 
     strategy:
+      # One PHP version failing, e.g. the newest, should not hide the results of the others.
+      fail-fast: false
       matrix:
-        php: [ '8.2', '8.3', '8.4' ]
+        php: [ '8.4', '8.5', '8.6' ]
 
     steps:
       - uses: actions/checkout@v6
@@ -56,6 +58,8 @@ jobs:
         with:
           php-version: ${{ matrix.php }}
           coverage: ${{ matrix.php == env.COVERAGE_PHP_VERSION && 'xdebug' || 'none' }}
+          # Codeception refuses to run when this is off, which a php.ini can make it from PHP 8.5.
+          ini-values: register_argc_argv=On
 
       - name: Update .env.testing config for GitHub Actions
         env:
