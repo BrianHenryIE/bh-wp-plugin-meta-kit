@@ -1,37 +1,45 @@
 # BH Plugin Meta Kit
 
-A library to help you manage your plugin on plugins.php
+A `plugins.php` helper library for WordPress plugins which are not hosted on WordPress.org. It adds links in row meta and uses `readme.txt` to populate the `View details` modal.
 
-* Add Settings link on plugins.php
-* Add `View details` modal link on plugins.php (absent on plugins not hosted on .org)
-* Add Settings link to update.php
-* Add temporary admin notice on plugin activation
+![The plugin's row on plugins.php, with Settings, View details and View on GitHub links](docs/screenshots/plugins-page-row.png)
 
-??
+```php
+/**
+ * Plugin Name:   My Plugin
+ * ...
+ * Settings Link: options-general.php?page=my-plugin
+ * GitHub Link:   https://github.com/example/my-plugin
+ */
+```
 
-Add main settings link which appears in the three main spots.
-
-API to add more links on plugins.php.
-Auto-scan menus after plugins_loaded to add links to plugins.php and update.php.
-Add activation hook and record last activation time.
-Possible to detect via menu registered page that the settings page has ever been visited?
-
-does admin_init run on plugin activation, e.g. during wp cli plugin activation. 
-i.e. can we hide everything behind it for performance 
-
-
-How to handle conditional menu items? (e.g. settings only appears when WooCommerce is active.)
-
-screenshots tab
-GitHub plugins.php link from plugin headers
-
-GitHub Action as a step to confirm readme has been updated (since last release -- version and changelog)
-
+# Install
 
 ```bash
 composer require brianhenryie/bh-wp-plugin-meta-kit
 ```
 
-```php
-add_action( 'admin_init', array ( Plugin_Meta_Kit::class, 'initialize' ) );
-```
+The library's `files` autoloader loads `bootstrap.php` which checks for and loads `bootstrap2.php` which infers the 
+settings to use with the library. You can delete `bootstrap2.php` and instantiate it directly yourself.
+
+When using libraries in WordPress plugins, you need to isolate dependencies with a tool such as [Strauss](https://github.com/BrianHenryIE/strauss).
+
+## Features
+
+In addition to the `plugins.php` `Settings` link and `View details` modal...
+
+### Activation notice
+
+For a week after your plugin is activated, users who can manage options see a notice linking to its settings screen. It stops once someone visits that screen, and each user can dismiss it.
+
+![The activation notice: "options can be configured in its settings"](docs/screenshots/activation-notice.png)
+
+It needs the `Settings Link` header, or `settings_url`.
+
+### Dependencies notice
+
+Tell the library what your plugin needs, and users who can deactivate plugins see a notice for each thing the site is missing, with a link to deactivate the plugin. Each user can dismiss it.
+
+![The dependencies notice, naming the missing PHP extension and offering to deactivate the plugin](docs/screenshots/dependencies-notice.png)
+
+Dependencies cannot be read from the plugin's headers, so this needs your own settings, below.

@@ -1,0 +1,32 @@
+# vendor/bin/phpstan analyse --memory-limit 4G
+# vendor/bin/phpstan analyse --generate-baseline --memory-limit 4G   # only to remove fixed errors; new code must pass level 10
+includes:
+    - phpstan-baseline.neon
+
+parameters:
+    level: 10
+    paths:
+        - bootstrap.php
+        - bootstrap2.php
+        - includes
+        - development-plugin
+        - tests
+    excludePaths:
+        - tests/e2e-pw
+        - tests/_data
+        - tests/_output
+        - tests/_support
+    scanFiles:
+        - vendor/lucatume/wp-browser/includes/core-phpunit/includes/testcase-rest-api.php
+        - vendor/antecedent/patchwork/Patchwork.php
+        # WP_CLI\Utils\get_flag_value(), which the stubs do not include.
+        - vendor/wp-cli/wp-cli/php/utils.php
+    # A baseline entry or ignore which no longer matches is an error, so fixed errors are removed from the baseline.
+    reportUnmatchedIgnoredErrors: true
+    ignoreErrors:
+        # WP_Mock accepts `array( $object_matcher, 'method' )` for a hooked method, which its `callable` annotation does not allow.
+        -
+            message: '#^Parameter \#2 \$callback of static method WP_Mock\:\:expect(Action|Filter)(Not)?Added\(\) expects .*, array\{.*\} given\.$#'
+            identifier: argument.type
+            path: tests/unit
+            reportUnmatched: false

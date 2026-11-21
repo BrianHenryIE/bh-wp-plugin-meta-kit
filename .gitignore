@@ -64,3 +64,21 @@ token.json
 quickstart-cli.php
 
 *.secret.*
+
+# Test artifacts
+patches.lock.json
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+.phpunit.result.cache
+/artifacts
+
+# Claude Code
+.claude/settings.local.json
+
+/.playwright-mcp
+
+# php-cs-fixer
+.php-cs-fixer.cache
+/tools/php-cs-fixer/vendor/

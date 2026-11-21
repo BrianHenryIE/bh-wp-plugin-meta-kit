@@ -1,0 +1,82 @@
+name: Run PHP CodeSniffer
+
+# Run PHPCBF to fix changes then annotate PHPCS
+# NB: Pull requests from forks do not have access to repository secrets so cannot commit changes.
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    types: [opened, synchronize]
+
+jobs:
+  php-codesniffer:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        php: [ '8.4' ]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Install PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          tools: composer, cs2pr
+          extensions: zip
+
+      - name: Run composer install
+        run: composer install
+
+      - name: Run PHPCBF to fix what it can
+        continue-on-error: true
+        run: vendor/bin/phpcbf
+
+      - name: Commit PHPCBF changes
+        if: ${{ github.ref == 'refs/heads/master' || github.ref == 'refs/heads/main' }}
+        uses: stefanzweifel/git-auto-commit-action@v7
+        with:
+          commit_message: "🤖 PHPCBF"
+
+      - name: Run PHPCS to add annotations to the code
+        continue-on-error: true
+        run: |
+          vendor/bin/phpcs -q --report=checkstyle > phpcs-checkstyle.xml
+          cat phpcs-checkstyle.xml | cs2pr
+
+      - name: Fail if there are still phpcs errors in the production code (master/main)
+        if: ${{ github.event_name != 'pull_request' }}
+        run: vendor/bin/phpcs includes -v
+
+      - name: Get the PR diff
+        id: pr_diff
+        if: ${{ github.event_name == 'pull_request' }}
+        run: |
+          FILENAME="${{ env.TARGET_BRANCH_REF_NAME }}-${{ github.event.pull_request.head.sha }}.diff"
+          git fetch origin ${{ env.TARGET_BRANCH_REF_NAME }}:refs/remotes/origin/${{ env.TARGET_BRANCH_REF_NAME }}
+          git diff origin/${{ env.TARGET_BRANCH_REF_NAME }} > tmp.diff
+          mv tmp.diff $FILENAME
+          echo "diff_filename=$FILENAME" >> $GITHUB_OUTPUT
+          EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
+          echo "diff_contents<<$EOF" >> $GITHUB_OUTPUT
+          echo "$(cat $FILENAME)" >> $GITHUB_OUTPUT
+          echo "$EOF" >> $GITHUB_OUTPUT
+        env:
+          TARGET_BRANCH_REF_NAME: ${{ github.event.pull_request.base.ref }}
+
+      - name: Install kamazee/pr-filter
+        if: ${{ github.event_name == 'pull_request' }}
+        run: composer require --dev kamazee/pr-filter --no-scripts
+
+      - name: Fail if there are still phpcs errors in the modified files (pr)
+        if: ${{ github.event_name == 'pull_request' }}
+        run: |
+          vendor/bin/prf filter-checkstyle ${{ env.DIFF_FILENAME }} ${{ env.CHECKSTYLE_FILENAME }}  filtered-checkstyle.xml --base-path=$(pwd)
+          cat filtered-checkstyle.xml | cs2pr
+        env:
+          DIFF_FILENAME: ${{ steps.pr_diff.outputs.diff_filename }}
+          CHECKSTYLE_FILENAME: "phpcs-checkstyle.xml"

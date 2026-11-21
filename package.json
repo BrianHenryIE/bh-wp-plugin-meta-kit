@@ -1,0 +1,19 @@
+{
+  "name": "bh-wp-plugin-meta-kit",
+  "version": "1.0.0",
+  "description": "Library with convenience functions for WordPress admin plugin meta.",
+  "scripts": {
+    "wp-env": "wp-env start",
+    "test:e2e": "playwright test"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "GPL-2.0+",
+  "devDependencies": {
+    "@playwright/test": "^1.58.2",
+    "@types/node": "^20.12.12",
+    "@wordpress/e2e-test-utils-playwright": "^1.39.0",
+    "@wordpress/env": "^11.11",
+    "dotenv": "^17.3.1"
+  }
+}
