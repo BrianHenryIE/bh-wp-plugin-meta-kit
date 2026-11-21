@@ -71,6 +71,10 @@ jobs:
         env:
           TARGET_BRANCH_REF_NAME: ${{ github.event.pull_request.base.ref }}
 
+      - name: Install kamazee/pr-filter
+        if: ${{ github.event_name == 'pull_request' }}
+        run: composer require --dev kamazee/pr-filter --no-scripts
+
       - name: Fail if there are still phpcs errors in the modified files (pr)
         if: ${{ github.event_name == 'pull_request' }}
         run: |

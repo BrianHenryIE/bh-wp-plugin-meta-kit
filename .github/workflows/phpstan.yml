@@ -77,6 +77,10 @@ jobs:
         continue-on-error: true
         run: vendor/bin/phpstan analyse ${{ steps.changed_files_src.outputs.all_changed_files }} -c phpstan.neon --memory-limit 1G --error-format=checkstyle | sponge phpstan-checkstyle.xml
 
+      - name: Install kamazee/pr-filter
+        if: ${{ github.event_name == 'pull_request' }}
+        run: composer require --dev kamazee/pr-filter --no-scripts
+
       - name: Fail if there are still PHPStan errors in the modified files (pr)
         if: ${{ github.event_name == 'pull_request' }}
         run: |

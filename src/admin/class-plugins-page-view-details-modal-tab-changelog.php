@@ -52,6 +52,7 @@ class Plugins_Page_View_Details_Modal_Tab_Changelog {
 	}
 
 	protected function get_changelog_tab_html(): string {
+		// changelog could be in readme.txt or changelog.md.
 		return 'TODO: parse markdown and display changelog here.';
 	}
 }
