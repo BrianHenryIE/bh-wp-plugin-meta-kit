@@ -10,6 +10,7 @@ use BrianHenryIE\Plugin_Meta_Kit\Admin\Plugins_Page_View_Details_Modal;
 use BrianHenryIE\Plugin_Meta_Kit\Admin\Plugins_Page_View_Details_Modal_Readme;
 use BrianHenryIE\Plugin_Meta_Kit\Admin\Plugins_Page_View_Details_Modal_Tab_Changelog;
 use BrianHenryIE\Plugin_Meta_Kit\Model\Dependency;
+use Mockery;
 use WP_Mock;
 use WP_Mock\Matcher\AnyInstance;
 use WPTRT\AdminNotices\Notices;
@@ -140,6 +141,10 @@ class Plugin_Meta_Kit_Unit_Test extends Unit_Testcase {
 			->once()
 			->with( 'user', 0, 'bh_wp_plugin_meta_kit_notice_dismissed_my-plugin_dependency_woocommerce', '', true )
 			->andReturn( true );
+		WP_Mock::userFunction( 'delete_metadata' )
+			->once()
+			->with( 'user', 0, 'bh_wp_plugin_meta_kit_notice_dismissed_my-plugin_activation', '', true )
+			->andReturn( true );
 
 		$settings = new Plugin_Meta_Kit_Settings(
 			plugin_slug: 'my-plugin',
@@ -178,5 +183,23 @@ class Plugin_Meta_Kit_Unit_Test extends Unit_Testcase {
 			Plugin_Meta_Kit::class,
 			Plugin_Meta_Kit::get_instance(),
 		);
+	}
+
+	/**
+	 * @covers ::activation
+	 */
+	public function test_activation_registers_the_hook_which_records_the_time(): void {
+		WP_Mock::userFunction( 'register_activation_hook' )
+			->once()
+			->with(
+				'my-plugin/my-plugin.php',
+				Mockery::on(
+					fn ( $callback ): bool => is_array( $callback )
+						&& $callback[0] instanceof Plugin_Activation
+						&& 'record_activation' === $callback[1],
+				),
+			);
+
+		( new Plugin_Meta_Kit( $this->get_settings(), $this->logger ) )->activation();
 	}
 }

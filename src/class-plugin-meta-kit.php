@@ -9,13 +9,13 @@ declare( strict_types = 1 );
 
 namespace BrianHenryIE\Plugin_Meta_Kit;
 
+use BrianHenryIE\Plugin_Meta_Kit\Admin\Activation_Admin_Notice;
 use BrianHenryIE\Plugin_Meta_Kit\Admin\Dependencies_Notice;
 use BrianHenryIE\Plugin_Meta_Kit\Admin\Plugin_Installer;
 use BrianHenryIE\Plugin_Meta_Kit\Admin\Plugins_Page_Table_Row;
 use BrianHenryIE\Plugin_Meta_Kit\Admin\Plugins_Page_View_Details_Modal;
 use BrianHenryIE\Plugin_Meta_Kit\Admin\Plugins_Page_View_Details_Modal_Readme;
 use BrianHenryIE\Plugin_Meta_Kit\Admin\Plugins_Page_View_Details_Modal_Tab_Changelog;
-use DateTimeImmutable;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 use WPTRT\AdminNotices\Notices;
@@ -27,8 +27,8 @@ class Plugin_Meta_Kit {
 	/** The single instance, set by {@see self::initialize()}. */
 	protected static Plugin_Meta_Kit $instance;
 
-	/** Set by {@see self::dependencies_notice()}. */
-	protected ?Dependencies_Notice $dependencies_notice = null;
+	/** Prints the admin notices and handles their dismissal; set by {@see self::get_notices()}. */
+	protected ?Notices $notices = null;
 
 	/**
 	 * Create the single instance and add its hooks.
@@ -40,6 +40,7 @@ class Plugin_Meta_Kit {
 		self::$instance = new Plugin_Meta_Kit( $settings, $logger ?? new NullLogger() );
 		self::$instance->view_details_modal();
 		self::$instance->dependencies_notice();
+		self::$instance->activation_notice();
 		self::$instance->plugins_page_table_row();
 		self::$instance->plugin_installer();
 	}
@@ -151,42 +152,67 @@ class Plugin_Meta_Kit {
 	 * Warn users who can deactivate the plugin when the site lacks something it needs.
 	 */
 	public function dependencies_notice(): void {
-		$notices = new Notices();
-		$notices->boot();
+		$dependencies_notice = new Dependencies_Notice( $this->settings, $this->get_notices(), $this->logger );
+		$dependencies_notice->add_notices();
+	}
 
-		$this->dependencies_notice = new Dependencies_Notice( $this->settings, $notices, $this->logger );
-		$this->dependencies_notice->add_notices();
+	/**
+	 * For a week after the plugin is activated, invite administrators to its settings screen.
+	 *
+	 * The activation must have been recorded: the zero-config setup does that, otherwise {@see self::activation()}.
+	 */
+	public function activation_notice(): void {
+		$activation_admin_notice = new Activation_Admin_Notice(
+			$this->settings,
+			new Plugin_Activation( $this->settings->plugin_slug, $this->logger ),
+			$this->get_notices(),
+			$this->logger,
+		);
+		$activation_admin_notice->add_setup_notice();
+	}
+
+	/**
+	 * The notices, with the hook which prints them added the first time.
+	 */
+	protected function get_notices(): Notices {
+		if ( null === $this->notices ) {
+			$this->notices = new Notices();
+			$this->notices->boot();
+		}
+
+		return $this->notices;
 	}
 
 	/**
 	 * Show every notice again to the users who dismissed it.
 	 *
-	 * Works on any request, not only those where {@see self::dependencies_notice()} has run, e.g. REST and WP-CLI.
+	 * Works on any request, not only wp-admin page loads, e.g. REST and WP-CLI.
 	 */
 	public function reset_dismissed_notices(): void {
-		$dependencies_notice = $this->dependencies_notice ?? new Dependencies_Notice( $this->settings, new Notices(), $this->logger );
-
+		$dependencies_notice = new Dependencies_Notice( $this->settings, new Notices(), $this->logger );
 		$dependencies_notice->reset_dismissed();
+
+		$activation_admin_notice = new Activation_Admin_Notice(
+			$this->settings,
+			new Plugin_Activation( $this->settings->plugin_slug, $this->logger ),
+			new Notices(),
+			$this->logger,
+		);
+		$activation_admin_notice->reset_dismissed();
 	}
 
 	/**
-	 * Record when the plugin was last activated, for the temporary activation admin notice.
+	 * Record when the plugin is activated, for the temporary activation admin notice.
+	 *
+	 * Call it as the plugin's file is loaded, as `register_activation_hook()` must be: `admin_init` has already
+	 * run by the time WordPress loads a plugin to activate it. The zero-config setup records activation itself.
 	 */
 	public function activation(): void {
-		$log_activation_time_for_settings_notice = function (): void {
-			$last_activated_option_name = function ( string $plugin_slug ): string {
-				return str_replace( '-', '_', $plugin_slug ) . '_bhpmk_last_activated';
-			};
-
-			update_option(
-				$last_activated_option_name( $this->settings->plugin_slug ),
-				new DateTimeImmutable(),
-			);
-		};
+		$plugin_activation = new Plugin_Activation( $this->settings->plugin_slug, $this->logger );
 
 		register_activation_hook(
 			$this->settings->plugin_basename,
-			$log_activation_time_for_settings_notice,
+			array( $plugin_activation, 'record_activation' ),
 		);
 	}
 }

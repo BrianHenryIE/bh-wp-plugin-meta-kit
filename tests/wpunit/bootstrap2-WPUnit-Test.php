@@ -11,6 +11,7 @@ use lucatume\WPBrowser\TestCase\WPTestCase;
  * @covers \BrianHenryIE\Plugin_Meta_Kit\get_settings_url
  * @covers \BrianHenryIE\Plugin_Meta_Kit\get_github_url
  * @covers \BrianHenryIE\Plugin_Meta_Kit\get_plugin_file_header
+ * @covers \BrianHenryIE\Plugin_Meta_Kit\record_activation_of_plugin
  */
 class Bootstrap2_WPUnit_Test extends WPTestCase {
 	protected const TEST_PLUGIN_SLUG = 'meta-kit-test-plugin';
@@ -174,5 +175,55 @@ class Bootstrap2_WPUnit_Test extends WPTestCase {
 		$this->install_test_plugin();
 
 		$this->assertSame( '', $this->make_test_plugin_settings()->github_url );
+	}
+
+	public function test_activation_of_the_plugin_the_library_is_in_is_recorded(): void {
+		$this->install_test_plugin();
+		delete_option( 'meta_kit_test_plugin_bhpmk_last_activated' );
+
+		$before = time();
+
+		record_activation_of_plugin(
+			self::TEST_PLUGIN_SLUG . '/' . self::TEST_PLUGIN_SLUG . '.php',
+			WP_PLUGIN_DIR . '/' . self::TEST_PLUGIN_SLUG . '/vendor/brianhenryie/bh-wp-plugin-meta-kit/bootstrap2.php',
+		);
+
+		$recorded = get_option( 'meta_kit_test_plugin_bhpmk_last_activated' );
+
+		$this->assertIsNumeric( $recorded );
+		$this->assertGreaterThanOrEqual( $before, (int) $recorded );
+		$this->assertLessThanOrEqual( time(), (int) $recorded );
+
+		delete_option( 'meta_kit_test_plugin_bhpmk_last_activated' );
+	}
+
+	/**
+	 * `activated_plugin` runs whichever plugin was activated.
+	 */
+	public function test_activation_of_another_plugin_is_not_recorded(): void {
+		$this->install_test_plugin();
+		delete_option( 'meta_kit_test_plugin_bhpmk_last_activated' );
+
+		record_activation_of_plugin(
+			'akismet/akismet.php',
+			WP_PLUGIN_DIR . '/' . self::TEST_PLUGIN_SLUG . '/vendor/brianhenryie/bh-wp-plugin-meta-kit/bootstrap2.php',
+		);
+
+		$this->assertFalse( get_option( 'meta_kit_test_plugin_bhpmk_last_activated' ) );
+	}
+
+	/**
+	 * A plugin whose directory name begins with this plugin's is another plugin.
+	 */
+	public function test_activation_of_a_plugin_with_a_similar_name_is_not_recorded(): void {
+		$this->install_test_plugin();
+		delete_option( 'meta_kit_test_plugin_bhpmk_last_activated' );
+
+		record_activation_of_plugin(
+			self::TEST_PLUGIN_SLUG . '-pro/' . self::TEST_PLUGIN_SLUG . '-pro.php',
+			WP_PLUGIN_DIR . '/' . self::TEST_PLUGIN_SLUG . '/vendor/brianhenryie/bh-wp-plugin-meta-kit/bootstrap2.php',
+		);
+
+		$this->assertFalse( get_option( 'meta_kit_test_plugin_bhpmk_last_activated' ) );
 	}
 }

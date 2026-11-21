@@ -7,36 +7,6 @@ parameters:
 			path: development-plugin/class-mappings.php
 
 		-
-			message: '#^Access to constant ACTIVATED_TIME_OPTION_KEY on an unknown class BrianHenryIE\\Plugin_Meta_Kit\\Admin\\Activator\.$#'
-			identifier: class.notFound
-			count: 1
-			path: src/admin/class-activation-admin-notice.php
-
-		-
-			message: '#^Found usage of constant DOING_AJAX\. Use wp_doing_ajax\(\) instead\.$#'
-			identifier: phpstanWP.wpConstant.fetch
-			count: 1
-			path: src/admin/class-activation-admin-notice.php
-
-		-
-			message: '#^Parameter \#1 \$array of function array_pop expects array, mixed given\.$#'
-			identifier: argument.type
-			count: 1
-			path: src/admin/class-activation-admin-notice.php
-
-		-
-			message: '#^Parameter \#1 \$option of function get_option expects string, mixed given\.$#'
-			identifier: argument.type
-			count: 1
-			path: src/admin/class-activation-admin-notice.php
-
-		-
-			message: '#^Parameter \#1 \$value of function intval expects array\|bool\|float\|GMP\|int\|resource\|SimpleXMLElement\|string\|null, mixed given\.$#'
-			identifier: argument.type
-			count: 1
-			path: src/admin/class-activation-admin-notice.php
-
-		-
 			message: '#^Access to an undefined property object\:\:\$no_update\.$#'
 			identifier: property.notFound
 			count: 1

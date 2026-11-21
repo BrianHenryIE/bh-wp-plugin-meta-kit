@@ -99,3 +99,14 @@ Add a `GitHub Link` header and a "View on GitHub" link is added after the plugin
 ```
 
 When you build `Plugin_Meta_Kit_Settings` yourself, pass the full URL as `github_url`.
+
+
+## Activation notice
+
+For a week after your plugin is activated, users who can manage options see a dismissible notice linking to its settings screen (the `Settings Link` header, or `settings_url`). It stops once someone visits that screen.
+
+The zero-config setup records the activation. If you set the library up yourself, call `activation()` as your plugin's file is loaded, as you would `register_activation_hook()`:
+
+```php
+( new Plugin_Meta_Kit( $settings ) )->activation();
+```

@@ -13,6 +13,8 @@ declare(strict_types=1);
 
 namespace BrianHenryIE\Plugin_Meta_Kit;
 
+use Psr\Log\NullLogger;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	return;
 }
@@ -127,6 +129,43 @@ if ( ! function_exists( __NAMESPACE__ . '\\get_github_url' ) ) {
 
 		return 'https://github.com/' . ltrim( $github_link, '/' );
 	}
+}
+
+if ( ! function_exists( __NAMESPACE__ . '\\record_activation_of_plugin' ) ) {
+	/**
+	 * Record the time, when the plugin which was activated is the one the library is bundled in.
+	 *
+	 * @param string $activated_plugin_basename The plugin which was activated, relative to the plugins directory.
+	 * @param string $library_file_path         A file inside the library, used to find the plugin directory it is under.
+	 */
+	function record_activation_of_plugin( string $activated_plugin_basename, string $library_file_path = __FILE__ ): void {
+		$plugin_slug = explode( '/', plugin_basename( $library_file_path ) )[0];
+
+		if ( ! str_starts_with( $activated_plugin_basename, $plugin_slug . '/' ) ) {
+			return;
+		}
+
+		( new Plugin_Activation( $plugin_slug, new NullLogger() ) )->record_activation();
+	}
+}
+
+if ( ! function_exists( __NAMESPACE__ . '\\record_plugin_activation' ) ) {
+	/**
+	 * Record when the plugin the library is bundled in is activated, for the temporary activation admin notice.
+	 *
+	 * `activated_plugin` is used, not `register_activation_hook()`, which needs the plugin's main file: finding
+	 * that means listing the plugins directory, which is too slow to do on every request.
+	 *
+	 * @hooked activated_plugin
+	 * @see bootstrap2.php
+	 *
+	 * @param string $activated_plugin_basename The plugin which was activated, relative to the plugins directory.
+	 */
+	function record_plugin_activation( $activated_plugin_basename ): void {
+		record_activation_of_plugin( (string) $activated_plugin_basename );
+	}
+
+	add_action( 'activated_plugin', __NAMESPACE__ . '\\record_plugin_activation' );
 }
 
 if ( ! function_exists( __NAMESPACE__ . '\\initialize_plugin_meta_kit' ) ) {

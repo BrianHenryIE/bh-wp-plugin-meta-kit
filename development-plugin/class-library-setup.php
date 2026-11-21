@@ -10,8 +10,10 @@ declare( strict_types = 1 );
 namespace BrianHenryIE\Plugin_Meta_Kit\Development_Plugin;
 
 use BrianHenryIE\Plugin_Meta_Kit\Model\Dependency;
+use BrianHenryIE\Plugin_Meta_Kit\Plugin_Activation;
 use BrianHenryIE\Plugin_Meta_Kit\Plugin_Meta_Kit;
 use BrianHenryIE\Plugin_Meta_Kit\Plugin_Meta_Kit_Settings;
+use Psr\Log\NullLogger;
 
 use function BrianHenryIE\Plugin_Meta_Kit\make_settings;
 
@@ -33,6 +35,7 @@ class Library_Setup {
 		add_action( 'admin_init', array( $this, 'initialize_library' ) );
 
 		add_action( 'init', array( $this, 'register_missing_dependency_setting' ) );
+		add_action( 'init', array( $this, 'register_activation_time_settings' ) );
 	}
 
 	/**
@@ -117,5 +120,35 @@ class Library_Setup {
 				'sanitize_callback' => 'rest_sanitize_boolean',
 			),
 		);
+	}
+
+	/**
+	 * Expose the library's activation and settings-visit times in the core settings REST endpoint, so the
+	 * Playwright tests can say when the plugin was activated without deactivating it under the other tests.
+	 *
+	 * @hooked init
+	 * @see self::register_hooks()
+	 */
+	public function register_activation_time_settings(): void {
+		$plugin_activation = new Plugin_Activation( 'development-plugin', new NullLogger() );
+
+		$option_names = array(
+			$plugin_activation->get_activation_time_option_name(),
+			$plugin_activation->get_settings_visit_time_option_name(),
+		);
+
+		foreach ( $option_names as $option_name ) {
+			register_setting(
+				'development_plugin_activation',
+				$option_name,
+				array(
+					'type'              => 'integer',
+					'description'       => 'A Unix timestamp the plugin meta kit library saved for the development plugin.',
+					'default'           => 0,
+					'show_in_rest'      => true,
+					'sanitize_callback' => 'absint',
+				),
+			);
+		}
 	}
 }
