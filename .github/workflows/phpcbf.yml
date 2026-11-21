@@ -53,7 +53,7 @@ jobs:
 
       - name: Fail if there are still phpcs errors in the production code (master/main)
         if: ${{ github.event_name != 'pull_request' }}
-        run: vendor/bin/phpcs src -v
+        run: vendor/bin/phpcs includes -v
 
       - name: Get the PR diff
         id: pr_diff

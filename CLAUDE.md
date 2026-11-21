@@ -3,7 +3,7 @@ Shared rules for all BrianHenryIE projects are in `~/.claude/CLAUDE.md`; the rul
 ## The project
 
 * This is a library, not a plugin: it ships inside another plugin at `wp-content/plugins/{slug}/vendor/brianhenryie/bh-wp-plugin-meta-kit`, and works out which plugin that is from its own path
-* The code is in `src` (where the shared rules say `includes`); `src/admin` is wp-admin UI only
+* The code is in `includes`; `includes/admin` is wp-admin UI only
 * `development-plugin` is the plugin the library runs for in wp-env. Keep it in sync with changes to the library
 * wp-env runs on port 8884, MySQL on 33064 (`npx wp-env start`)
 * wp-env maps the project root to `wp-content/uploads/development-plugin`, and `development-plugin/class-mappings.php` tells WordPress that is the plugin's directory. That hides path and bootstrap bugs a real `vendor` install would show, so do not treat a pass in wp-env as proof `plugin_basename()` logic is right

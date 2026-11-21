@@ -18,7 +18,7 @@ $finder = Finder::create()
 					array(
 						__DIR__ . '/bin',
 						__DIR__ . '/development-plugin',
-						__DIR__ . '/src',
+						__DIR__ . '/includes',
 						__DIR__ . '/tests',
 					),
 				)

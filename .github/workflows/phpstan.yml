@@ -48,11 +48,11 @@ jobs:
 
       - name: Get changed files
         if: ${{ github.event_name == 'pull_request' }}
-        id: changed_files_src
+        id: changed_files_includes
         uses: tj-actions/changed-files@v47
         with:
           separator: ' '
-          files: 'src/**/**.php'
+          files: 'includes/**/**.php'
 
       # This outputs `steps.pr_diff.outputs.diff_filename` and `steps.pr_diff.outputs.diff_contents`.
       - name: Get the PR diff
@@ -72,10 +72,10 @@ jobs:
           TARGET_BRANCH_REF_NAME: ${{ github.event.pull_request.base.ref }}
 
       # On PRs, only fail for errors in important modified files.
-      - name: Run PHPStan at phpstan.neon level only on changed_files in src directory
+      - name: Run PHPStan at phpstan.neon level only on changed_files in includes directory
         if: ${{ github.event_name == 'pull_request' }}
         continue-on-error: true
-        run: vendor/bin/phpstan analyse ${{ steps.changed_files_src.outputs.all_changed_files }} -c phpstan.neon --memory-limit 1G --error-format=checkstyle | sponge phpstan-checkstyle.xml
+        run: vendor/bin/phpstan analyse ${{ steps.changed_files_includes.outputs.all_changed_files }} -c phpstan.neon --memory-limit 1G --error-format=checkstyle | sponge phpstan-checkstyle.xml
 
       - name: Install kamazee/pr-filter
         if: ${{ github.event_name == 'pull_request' }}

@@ -28,7 +28,7 @@ params:
 coverage:
     enabled: true
     include:
-        - /src/*
+        - /includes/*
     exclude:
         - /vendor/*
         - /dist-archive/*

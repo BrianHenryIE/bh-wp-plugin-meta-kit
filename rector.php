@@ -18,7 +18,7 @@ return RectorConfig::configure()
 			__DIR__ . '/bootstrap.php',
 			__DIR__ . '/bootstrap2.php',
 			__DIR__ . '/development-plugin',
-			__DIR__ . '/src',
+			__DIR__ . '/includes',
 			__DIR__ . '/tests/unit',
 			__DIR__ . '/tests/wpunit',
 		)

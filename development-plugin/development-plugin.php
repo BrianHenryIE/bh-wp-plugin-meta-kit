@@ -23,7 +23,7 @@ require_once __DIR__ . '/class-mappings.php';
 /**
  * The library is the project root, not a Composer dependency of this plugin, so there is no
  * `development-plugin/vendor`. wp-env maps the project root to `wp-content/uploads/development-plugin`, which is
- * where the library's own `vendor/autoload.php` (and its `src`) are inside the container.
+ * where the library's own `vendor/autoload.php` (and its `includes`) are inside the container.
  *
  * @see .wp-env.json
  */

@@ -11,7 +11,7 @@
   ],
   "autoload": {
     "classmap": [
-      "src"
+      "includes"
     ],
     "files": [
       "bootstrap.php"
@@ -104,7 +104,7 @@
       "@no-inline-scripts"
     ],
     "no-inline-scripts": [
-      "! grep -rn --include=*.php '<script' src bootstrap.php || ( echo 'PHP must not print <script> tags: enqueue a file and pass data with wp_add_inline_script( ..., \"before\" ).' && exit 1 )"
+      "! grep -rn --include=*.php '<script' includes bootstrap.php bootstrap2.php || ( echo 'PHP must not print <script> tags: enqueue a file and pass data with wp_add_inline_script( ..., \"before\" ).' && exit 1 )"
     ],
     "cs-fix": [
       "@php-cs-fixer",
