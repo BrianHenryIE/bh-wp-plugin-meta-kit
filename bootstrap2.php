@@ -168,6 +168,32 @@ if ( ! function_exists( __NAMESPACE__ . '\\record_plugin_activation' ) ) {
 	add_action( 'activated_plugin', __NAMESPACE__ . '\\record_plugin_activation' );
 }
 
+if ( ! function_exists( __NAMESPACE__ . '\\is_relevant_request' ) ) {
+	/**
+	 * Is this a request the library has a part in? Checked during `admin_init`, before any work is done.
+	 *
+	 * `admin_init` is what keeps the library out of front-end, REST, cron and WP-CLI requests, so there is no check
+	 * for those here, nor one where this file is loaded: `activated_plugin`, above, has to be hooked on every kind
+	 * of request, since a plugin can be activated from WP-CLI and the REST API.
+	 *
+	 * But `admin_init` also runs for every `admin-ajax.php` request, e.g. the Heartbeat every 15 to 60 seconds in
+	 * each open tab, and for `admin-post.php`. The only one of those the library handles is the request which
+	 * dismisses a notice.
+	 */
+	function is_relevant_request(): bool {
+		if ( wp_doing_ajax() ) {
+			// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Only compared with one action's name, to tell which request this is; the action itself checks a nonce.
+			$action = isset( $_REQUEST['action'] ) && is_string( $_REQUEST['action'] ) ? sanitize_key( wp_unslash( $_REQUEST['action'] ) ) : '';
+
+			return 'wptrt_dismiss_notice' === $action;
+		}
+
+		global $pagenow;
+
+		return 'admin-post.php' !== $pagenow;
+	}
+}
+
 if ( ! function_exists( __NAMESPACE__ . '\\initialize_plugin_meta_kit' ) ) {
 	/**
 	 * Start the library for the plugin it is bundled in.
@@ -179,6 +205,10 @@ if ( ! function_exists( __NAMESPACE__ . '\\initialize_plugin_meta_kit' ) ) {
 	 * @see bootstrap2.php
 	 */
 	function initialize_plugin_meta_kit(): void {
+		if ( ! is_relevant_request() ) {
+			return;
+		}
+
 		$settings = make_settings();
 
 		// The library is not under a plugin's directory, e.g. it is symlinked, so there is no row on plugins.php to add to.

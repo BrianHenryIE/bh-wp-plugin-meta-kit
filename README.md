@@ -48,6 +48,9 @@ use BrianHenryIE\Plugin_Meta_Kit\Plugin_Meta_Kit_Settings;
 // Replace the zero-config setup with your own settings.
 remove_action( 'admin_init', 'BrianHenryIE\\Plugin_Meta_Kit\\initialize_plugin_meta_kit' );
 
+// Optional: return early from your callback unless \BrianHenryIE\Plugin_Meta_Kit\is_relevant_request(),
+// to skip the admin-ajax.php requests (e.g. Heartbeat) the library has no part in.
+
 add_action(
 	'admin_init',
 	function () {

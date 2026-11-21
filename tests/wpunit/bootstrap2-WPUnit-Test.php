@@ -12,6 +12,8 @@ use lucatume\WPBrowser\TestCase\WPTestCase;
  * @covers \BrianHenryIE\Plugin_Meta_Kit\get_github_url
  * @covers \BrianHenryIE\Plugin_Meta_Kit\get_plugin_file_header
  * @covers \BrianHenryIE\Plugin_Meta_Kit\record_activation_of_plugin
+ * @covers \BrianHenryIE\Plugin_Meta_Kit\is_relevant_request
+ * @covers \BrianHenryIE\Plugin_Meta_Kit\initialize_plugin_meta_kit
  */
 class Bootstrap2_WPUnit_Test extends WPTestCase {
 	protected const TEST_PLUGIN_SLUG = 'meta-kit-test-plugin';
@@ -73,7 +75,71 @@ class Bootstrap2_WPUnit_Test extends WPTestCase {
 
 		wp_cache_delete( 'plugins', 'plugins' );
 
+		remove_all_filters( 'wp_doing_ajax' );
+		unset( $_REQUEST['action'] );
+		$GLOBALS['pagenow'] = 'index.php';
+
 		parent::tearDown();
+	}
+
+	/**
+	 * Set up the request as WordPress would see it.
+	 *
+	 * @param string  $pagenow     The wp-admin file requested.
+	 * @param ?string $ajax_action The AJAX action, when it is an `admin-ajax.php` request.
+	 */
+	protected function mock_request( string $pagenow, ?string $ajax_action = null ): void {
+		$GLOBALS['pagenow'] = $pagenow;
+
+		if ( null !== $ajax_action ) {
+			add_filter( 'wp_doing_ajax', '__return_true' );
+			$_REQUEST['action'] = $ajax_action;
+		}
+	}
+
+	/**
+	 * @return array<string, array{0: string, 1: ?string, 2: bool}>
+	 */
+	public static function requests(): array {
+		return array(
+			'the dashboard'                        => array( 'index.php', null, true ),
+			'plugins.php'                          => array( 'plugins.php', null, true ),
+			'the plugin details modal'             => array( 'plugin-install.php', null, true ),
+			'dismissing a notice'                  => array( 'admin-ajax.php', 'wptrt_dismiss_notice', true ),
+			'the Heartbeat'                        => array( 'admin-ajax.php', 'heartbeat', false ),
+			'another plugin\'s AJAX action'        => array( 'admin-ajax.php', 'another_plugin_action', false ),
+			'an AJAX request with an empty action' => array( 'admin-ajax.php', '', false ),
+			'a form posted to admin-post.php'      => array( 'admin-post.php', null, false ),
+		);
+	}
+
+	/**
+	 * `admin_init` runs for every one of these.
+	 *
+	 * @dataProvider requests
+	 *
+	 * @param string  $pagenow     The wp-admin file requested.
+	 * @param ?string $ajax_action The AJAX action, when it is an `admin-ajax.php` request.
+	 * @param bool    $expected    Whether the library has a part in the request.
+	 */
+	public function test_is_relevant_request( string $pagenow, ?string $ajax_action, bool $expected ): void {
+		$this->mock_request( $pagenow, $ajax_action );
+
+		$this->assertSame( $expected, is_relevant_request() );
+	}
+
+	/**
+	 * The plugins directory is not read for a request the library has no part in.
+	 */
+	public function test_library_is_not_initialized_for_an_irrelevant_request(): void {
+		$this->mock_request( 'admin-ajax.php', 'heartbeat' );
+
+		$this->assertFalse( has_filter( 'plugins_api' ) );
+
+		initialize_plugin_meta_kit();
+
+		// Initializing adds the library's `plugins_api` filters, among others.
+		$this->assertFalse( has_filter( 'plugins_api' ) );
 	}
 
 	protected function make_test_plugin_settings(): Plugin_Meta_Kit_Settings {

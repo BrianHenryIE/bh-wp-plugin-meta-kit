@@ -15,6 +15,7 @@ use BrianHenryIE\Plugin_Meta_Kit\Plugin_Meta_Kit;
 use BrianHenryIE\Plugin_Meta_Kit\Plugin_Meta_Kit_Settings;
 use Psr\Log\NullLogger;
 
+use function BrianHenryIE\Plugin_Meta_Kit\is_relevant_request;
 use function BrianHenryIE\Plugin_Meta_Kit\make_settings;
 
 /**
@@ -45,6 +46,11 @@ class Library_Setup {
 	 * @see self::register_hooks()
 	 */
 	public function initialize_library(): void {
+		// As the zero-config setup does: most AJAX requests have nothing to do with the library.
+		if ( ! is_relevant_request() ) {
+			return;
+		}
+
 		$settings = $this->get_settings();
 
 		if ( null === $settings ) {
