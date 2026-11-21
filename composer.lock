@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "8cfecf276fcb0baec95ebe3107d97339",
+    "content-hash": "c060493c1bb3d404d0b94b9a1fcef569",
     "packages": [
         {
             "name": "michelf/php-markdown",
@@ -379,23 +379,25 @@
         },
         {
             "name": "antecedent/patchwork",
-            "version": "2.1.28",
+            "version": "2.2.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/antecedent/patchwork.git",
-                "reference": "6b30aff81ebadf0f2feb9268d3e08385cebcc08d"
+                "reference": "1ea49951bdf0d2d7c0bd436ffd95215e08ed30ed"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/antecedent/patchwork/zipball/6b30aff81ebadf0f2feb9268d3e08385cebcc08d",
-                "reference": "6b30aff81ebadf0f2feb9268d3e08385cebcc08d",
+                "url": "https://api.github.com/repos/antecedent/patchwork/zipball/1ea49951bdf0d2d7c0bd436ffd95215e08ed30ed",
+                "reference": "1ea49951bdf0d2d7c0bd436ffd95215e08ed30ed",
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.4.0"
+                "php": ">=7.1.0"
             },
             "require-dev": {
-                "phpunit/phpunit": ">=4"
+                "phpcompatibility/php-compatibility": "^10.0.0@alpha",
+                "phpunit/phpunit": ">=4",
+                "squizlabs/php_codesniffer": "^3.13.5 || ^4.0"
             },
             "type": "library",
             "notification-url": "https://packagist.org/downloads/",
@@ -421,9 +423,9 @@
             ],
             "support": {
                 "issues": "https://github.com/antecedent/patchwork/issues",
-                "source": "https://github.com/antecedent/patchwork/tree/2.1.28"
+                "source": "https://github.com/antecedent/patchwork/tree/2.2.5"
             },
-            "time": "2024-02-06T09:26:11+00:00"
+            "time": "2026-11-10T09:08:20+00:00"
         },
         {
             "name": "behat/gherkin",

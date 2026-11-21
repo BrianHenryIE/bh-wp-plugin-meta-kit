@@ -57,7 +57,7 @@
   "require-dev": {
     "10up/wp_mock": "^1.0",
     "alleyinteractive/composer-wordpress-autoloader": "^1.0",
-    "antecedent/patchwork": "^2.1",
+    "antecedent/patchwork": "^2.2",
     "brianhenryie/color-logger": "^1.0",
     "brianhenryie/php-codecoverage-markdown": "^0.2.0",
     "brianhenryie/php-diff-test": "*",
