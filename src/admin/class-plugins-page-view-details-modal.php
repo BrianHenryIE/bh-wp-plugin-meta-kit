@@ -40,25 +40,7 @@ class Plugins_Page_View_Details_Modal {
 
 		// By default, add to `no_update`. If another mechanism has an update available, let that move and override this.
 		$update_plugins->no_update[ $this->settings->plugin_basename ] = (object) array(
-			//		'id' => $settings->plugin_slug, // maybe the Composer package name is better here.
 			'slug' => $this->settings->plugin_slug,
-			//		'plugin' => $settings->plugin_basename,
-			//		'new_version' => '1.2.3',
-			//		'url' => 'https://example.org/my-plugin/',
-			//		'package' => 'https://example.org/my-plugin/my-plugin.1.2.3.zip',
-			//		'icons' =>
-			//			array (
-			//				'1x' => 'https://example.org/my-plugin/icon.svg',
-			//				'svg' => 'https://example.org/my-plugin/icon.svg',
-			//			),
-			//		'banners' =>
-			//			array (
-			//				'1x' => 'https://example.org/my-plugin/banner-772x250.png',
-			//			),
-			//		'banners_rtl' =>
-			//			array (
-			//			),
-			//		'requires' => '5.2',
 		);
 
 		return $update_plugins;
