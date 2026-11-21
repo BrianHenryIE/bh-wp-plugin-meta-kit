@@ -50,6 +50,7 @@
   },
   "require": {
     "php": ">=8.2",
+    "psr/log": "^1.1 || ^2.0 || ^3.0",
     "syntatis/wp-plugin-readme-parser": "^3.2",
     "wptrt/admin-notices": "^1.0"
   },

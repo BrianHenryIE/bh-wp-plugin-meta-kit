@@ -32,3 +32,13 @@ if ( file_exists( __DIR__ . '/../vendor/autoload.php' ) ) {
 } elseif ( file_exists( ABSPATH . '/wp-content/uploads/development-plugin/vendor/autoload.php' ) ) {
 	require_once ABSPATH . '/wp-content/uploads/development-plugin/vendor/autoload.php';
 }
+
+require_once __DIR__ . '/class-library-setup.php';
+require_once __DIR__ . '/ui/class-settings-page.php';
+require_once __DIR__ . '/rest/class-dismissed-notices-controller.php';
+
+$library_setup = new Library_Setup();
+$library_setup->register_hooks();
+
+( new UI\Settings_Page( $library_setup ) )->register_hooks();
+( new Rest\Dismissed_Notices_Controller( $library_setup ) )->register_hooks();

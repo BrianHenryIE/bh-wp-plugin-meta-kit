@@ -37,18 +37,6 @@ parameters:
 			path: src/admin/class-activation-admin-notice.php
 
 		-
-			message: '#^Access to an undefined property BrianHenryIE\\Plugin_Meta_Kit\\Admin\\Dependencies_Notice\:\:\$api\.$#'
-			identifier: property.notFound
-			count: 1
-			path: src/admin/class-dependencies-notice.php
-
-		-
-			message: '#^Cannot call method is_server_has_dependencies\(\) on mixed\.$#'
-			identifier: method.nonObject
-			count: 1
-			path: src/admin/class-dependencies-notice.php
-
-		-
 			message: '#^Access to an undefined property object\:\:\$no_update\.$#'
 			identifier: property.notFound
 			count: 1

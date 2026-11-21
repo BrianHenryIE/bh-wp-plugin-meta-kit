@@ -35,3 +35,39 @@ composer require brianhenryie/bh-wp-plugin-meta-kit
 ```php
 add_action( 'admin_init', array ( Plugin_Meta_Kit::class, 'initialize' ) );
 ```
+
+## Dependencies notice
+
+Tell the library what your plugin needs, and users who can deactivate plugins see a dismissible admin notice for each thing the site is missing:
+
+```php
+use BrianHenryIE\Plugin_Meta_Kit\Model\Dependency;
+use BrianHenryIE\Plugin_Meta_Kit\Plugin_Meta_Kit;
+use BrianHenryIE\Plugin_Meta_Kit\Plugin_Meta_Kit_Settings;
+
+// Replace the zero-config setup with your own settings.
+remove_action( 'admin_init', '\\BrianHenryIE\\Plugin_Meta_Kit\\initialize_plugin_meta_kit' );
+
+add_action(
+	'admin_init',
+	function () {
+		Plugin_Meta_Kit::initialize(
+			new Plugin_Meta_Kit_Settings(
+				plugin_slug: 'my-plugin',
+				plugin_basename: 'my-plugin/my-plugin.php',
+				plugin_name: 'My Plugin',
+				dependencies: array(
+					new Dependency(
+						name: 'GMP (GNU Multiple Precision Arithmetic Library) PHP extension',
+						is_satisfied: fn (): bool => extension_loaded( 'gmp' ),
+						description: 'It is needed for the calculations to derive Bitcoin payment addresses. Please <strong>contact your hosting provider for support</strong>.',
+						url: 'https://www.php.net/manual/en/book.gmp.php',
+					),
+				),
+			)
+		);
+	}
+);
+```
+
+The check runs on every wp-admin page for those users, so keep it cheap. A dismissal is remembered per user; `Plugin_Meta_Kit::get_instance()->reset_dismissed_notices()` shows the notices again to everyone.

@@ -9,10 +9,14 @@ declare( strict_types = 1 );
 
 namespace BrianHenryIE\Plugin_Meta_Kit;
 
+use BrianHenryIE\Plugin_Meta_Kit\Admin\Dependencies_Notice;
 use BrianHenryIE\Plugin_Meta_Kit\Admin\Plugins_Page_View_Details_Modal;
 use BrianHenryIE\Plugin_Meta_Kit\Admin\Plugins_Page_View_Details_Modal_Readme;
 use BrianHenryIE\Plugin_Meta_Kit\Admin\Plugins_Page_View_Details_Modal_Tab_Changelog;
 use DateTimeImmutable;
+use Psr\Log\LoggerInterface;
+use Psr\Log\NullLogger;
+use WPTRT\AdminNotices\Notices;
 
 /**
  * Holds the single instance and adds the hooks for each feature.
@@ -21,14 +25,19 @@ class Plugin_Meta_Kit {
 	/** The single instance, set by {@see self::initialize()}. */
 	protected static Plugin_Meta_Kit $instance;
 
+	/** Set by {@see self::dependencies_notice()}. */
+	protected ?Dependencies_Notice $dependencies_notice = null;
+
 	/**
 	 * Create the single instance and add its hooks.
 	 *
 	 * @param Plugin_Meta_Kit_Settings $settings The plugin the library is working for.
+	 * @param ?LoggerInterface         $logger   The plugin's logger, if it has one.
 	 */
-	public static function initialize( Plugin_Meta_Kit_Settings $settings ): void {
-		self::$instance = new Plugin_Meta_Kit( $settings );
+	public static function initialize( Plugin_Meta_Kit_Settings $settings, ?LoggerInterface $logger = null ): void {
+		self::$instance = new Plugin_Meta_Kit( $settings, $logger ?? new NullLogger() );
 		self::$instance->view_details_modal();
+		self::$instance->dependencies_notice();
 	}
 
 	/**
@@ -52,9 +61,11 @@ class Plugin_Meta_Kit {
 	 * Constructor.
 	 *
 	 * @param Plugin_Meta_Kit_Settings $settings The plugin the library is working for.
+	 * @param LoggerInterface          $logger   Records the changes the library makes.
 	 */
 	public function __construct(
 		protected Plugin_Meta_Kit_Settings $settings,
+		protected LoggerInterface $logger = new NullLogger(),
 	) {
 	}
 
@@ -98,6 +109,28 @@ class Plugin_Meta_Kit {
 			11,
 			3,
 		);
+	}
+
+	/**
+	 * Warn users who can deactivate the plugin when the site lacks something it needs.
+	 */
+	public function dependencies_notice(): void {
+		$notices = new Notices();
+		$notices->boot();
+
+		$this->dependencies_notice = new Dependencies_Notice( $this->settings, $notices, $this->logger );
+		$this->dependencies_notice->add_notices();
+	}
+
+	/**
+	 * Show every notice again to the users who dismissed it.
+	 *
+	 * Works on any request, not only those where {@see self::dependencies_notice()} has run, e.g. REST and WP-CLI.
+	 */
+	public function reset_dismissed_notices(): void {
+		$dependencies_notice = $this->dependencies_notice ?? new Dependencies_Notice( $this->settings, new Notices(), $this->logger );
+
+		$dependencies_notice->reset_dismissed();
 	}
 
 	/**
