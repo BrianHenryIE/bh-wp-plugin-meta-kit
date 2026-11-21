@@ -13,6 +13,11 @@ declare( strict_types = 1 );
 
 namespace BrianHenryIE\Plugin_Meta_Kit\Development_Plugin;
 
+
+require_once __DIR__ . '/class-mappings.php';
+
+(new Mappings())->register_hooks();
+
 /**
  * The library is the project root, not a Composer dependency of this plugin, so there is no
  * `development-plugin/vendor`. wp-env maps the project root to `wp-content/uploads/development-plugin`, which is
