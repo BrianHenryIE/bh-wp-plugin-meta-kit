@@ -32,6 +32,16 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      # The development plugin loads the library through Composer's autoloader, which wp-env maps into the site.
+      - name: Install PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          tools: composer
+
+      - name: Install the library's PHP dependencies
+        run: composer install --no-dev
+
       - name: Install Playwright browsers
         run: npx playwright install --with-deps
 

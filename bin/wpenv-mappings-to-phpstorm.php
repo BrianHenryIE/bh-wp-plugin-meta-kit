@@ -17,6 +17,12 @@ $project_dir = is_file( dirname( __DIR__ ) . '/.wp-env.json' )
 $wp_env_file    = $project_dir . '/.wp-env.json';
 $workspace_file = $project_dir . '/.idea/workspace.xml';
 
+// Not a PhpStorm project, e.g. a fresh clone or CI: there is nothing to update, which is not an error.
+if ( ! is_dir( $project_dir . '/.idea' ) ) {
+	echo "No .idea directory at {$project_dir}; skipping the PhpStorm path mappings.\n";
+	exit( 0 );
+}
+
 if ( ! file_exists( $wp_env_file ) ) {
 	// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 	echo "Error: .wp-env.json not found at {$wp_env_file}\n";
