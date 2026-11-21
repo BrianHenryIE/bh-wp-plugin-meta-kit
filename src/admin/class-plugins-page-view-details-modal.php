@@ -44,16 +44,16 @@ class Plugins_Page_View_Details_Modal {
 			'slug' => $this->settings->plugin_slug,
 			//		'plugin' => $settings->plugin_basename,
 			//		'new_version' => '1.2.3',
-			//		'url' => 'https://bhwp.ie/test-plugin/',
-			//		'package' => 'https://bhwp.ie/test-plugin/wordpress-importer.0.8.1.zip',
+			//		'url' => 'https://example.org/my-plugin/',
+			//		'package' => 'https://example.org/my-plugin/my-plugin.1.2.3.zip',
 			//		'icons' =>
 			//			array (
-			//				'1x' => 'https://ps.w.org/wordpress-importer/assets/icon.svg?rev=2791650',
-			//				'svg' => 'https://ps.w.org/wordpress-importer/assets/icon.svg?rev=2791650',
+			//				'1x' => 'https://example.org/my-plugin/icon.svg',
+			//				'svg' => 'https://example.org/my-plugin/icon.svg',
 			//			),
 			//		'banners' =>
 			//			array (
-			//				'1x' => 'https://ps.w.org/wordpress-importer/assets/banner-772x250.png?rev=547654',
+			//				'1x' => 'https://example.org/my-plugin/banner-772x250.png',
 			//			),
 			//		'banners_rtl' =>
 			//			array (
