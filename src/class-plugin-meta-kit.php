@@ -38,15 +38,11 @@ class Plugin_Meta_Kit {
 				$plugin_basename_file = plugin_basename( __FILE__ );
 				$plugin_slug = explode( '/', $plugin_basename_file )[0];
 
-//				$plugin = array_filter(
-//					get_plugins($plugin_slug),
-//					function( string $e ) use ( $plugin_slug ): bool {
-//						return str_starts_with( $e, $plugin_slug );
-//					},
-//					ARRAY_FILTER_USE_KEY
-//				);
-
-				$plugin = get_plugins($plugin_slug);
+				$plugin = array_filter(
+					get_plugins(),
+					fn(string $key): bool => str_starts_with( $key, $plugin_slug ),
+					ARRAY_FILTER_USE_KEY
+				);
 
 				$this->plugin_slug = $plugin_slug;
 				$this->plugin_basename = array_key_first( $plugin );

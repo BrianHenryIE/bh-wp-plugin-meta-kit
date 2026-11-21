@@ -10,7 +10,8 @@
     }
   ],
   "autoload": {
-    "classmap": ["src"]
+    "classmap": ["src"],
+    "files": ["bootstrap.php"]
   },
   "autoload-dev": {
     "classmap": ["tests/unit","tests/wpunit"]
