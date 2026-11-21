@@ -68,6 +68,7 @@ class Library_Setup {
 			plugin_basename: $inferred_settings->plugin_basename,
 			plugin_name: $inferred_settings->plugin_name,
 			dependencies: array( $this->get_example_dependency() ),
+			settings_url: $inferred_settings->settings_url,
 		);
 	}
 

@@ -44,10 +44,46 @@ if ( ! function_exists( __NAMESPACE__ . '\\make_settings' ) ) {
 				plugin_slug: $plugin_slug,
 				plugin_basename: (string) $plugin_basename,
 				plugin_name: is_string( $plugin_name ) ? $plugin_name : $plugin_slug,
+				settings_url: get_settings_url( (string) $plugin_basename ),
 			);
 		}
 
 		return null;
+	}
+}
+
+if ( ! function_exists( __NAMESPACE__ . '\\get_settings_url' ) ) {
+	/**
+	 * Read the plugin's settings screen from a `Settings Link` header in its main file.
+	 *
+	 * ```
+	 * * Plugin Name:   My Plugin
+	 * * Settings Link: options-general.php?page=my-plugin
+	 * ```
+	 *
+	 * It is not one of WordPress's own plugin headers, so `get_plugins()` does not return it.
+	 *
+	 * @param string $plugin_basename The plugin's main file relative to the plugins directory.
+	 *
+	 * @return string The full URL: the header as it is when it is one, otherwise relative to wp-admin. Empty when the plugin has no such header.
+	 */
+	function get_settings_url( string $plugin_basename ): string {
+		$headers = get_file_data(
+			constant( 'WP_PLUGIN_DIR' ) . '/' . $plugin_basename,
+			array( 'settings_link' => 'Settings Link' ),
+		);
+
+		$settings_link = trim( $headers['settings_link'] );
+
+		if ( '' === $settings_link ) {
+			return '';
+		}
+
+		if ( 1 === preg_match( '#^https?://#i', $settings_link ) ) {
+			return $settings_link;
+		}
+
+		return admin_url( ltrim( $settings_link, '/' ) );
 	}
 }
 

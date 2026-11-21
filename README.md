@@ -71,3 +71,17 @@ add_action(
 ```
 
 The check runs on every wp-admin page for those users, so keep it cheap. A dismissal is remembered per user; `Plugin_Meta_Kit::get_instance()->reset_dismissed_notices()` shows the notices again to everyone.
+
+
+## Settings link
+
+Add a `Settings Link` header to your plugin's main file and the zero-config setup adds a "Settings" link to the plugin's row on plugins.php. It is relative to wp-admin, or a full URL:
+
+```php
+/**
+ * Plugin Name:   My Plugin
+ * Settings Link: options-general.php?page=my-plugin
+ */
+```
+
+When you build `Plugin_Meta_Kit_Settings` yourself, pass the full URL as `settings_url`.

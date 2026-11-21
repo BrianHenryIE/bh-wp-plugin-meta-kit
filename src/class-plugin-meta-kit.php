@@ -10,6 +10,7 @@ declare( strict_types = 1 );
 namespace BrianHenryIE\Plugin_Meta_Kit;
 
 use BrianHenryIE\Plugin_Meta_Kit\Admin\Dependencies_Notice;
+use BrianHenryIE\Plugin_Meta_Kit\Admin\Plugins_Page_Table_Row;
 use BrianHenryIE\Plugin_Meta_Kit\Admin\Plugins_Page_View_Details_Modal;
 use BrianHenryIE\Plugin_Meta_Kit\Admin\Plugins_Page_View_Details_Modal_Readme;
 use BrianHenryIE\Plugin_Meta_Kit\Admin\Plugins_Page_View_Details_Modal_Tab_Changelog;
@@ -38,6 +39,7 @@ class Plugin_Meta_Kit {
 		self::$instance = new Plugin_Meta_Kit( $settings, $logger ?? new NullLogger() );
 		self::$instance->view_details_modal();
 		self::$instance->dependencies_notice();
+		self::$instance->plugins_page_table_row();
 	}
 
 	/**
@@ -108,6 +110,19 @@ class Plugin_Meta_Kit {
 			array( $changelog_tab, 'add_changelog_tab' ),
 			11,
 			3,
+		);
+	}
+
+	/**
+	 * Add the hook which adds the Settings link to the plugin's row on plugins.php.
+	 */
+	public function plugins_page_table_row(): void {
+		$plugins_page_table_row = new Plugins_Page_Table_Row( $this->settings );
+		add_filter(
+			'plugin_action_links_' . $this->settings->plugin_basename,
+			array( $plugins_page_table_row, 'action_links' ),
+			10,
+			4,
 		);
 	}
 

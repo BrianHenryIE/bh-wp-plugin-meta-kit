@@ -4,6 +4,7 @@ declare( strict_types = 1 );
 
 namespace BrianHenryIE\Plugin_Meta_Kit;
 
+use BrianHenryIE\Plugin_Meta_Kit\Admin\Plugins_Page_Table_Row;
 use BrianHenryIE\Plugin_Meta_Kit\Admin\Plugins_Page_View_Details_Modal;
 use BrianHenryIE\Plugin_Meta_Kit\Admin\Plugins_Page_View_Details_Modal_Readme;
 use BrianHenryIE\Plugin_Meta_Kit\Admin\Plugins_Page_View_Details_Modal_Tab_Changelog;
@@ -68,6 +69,23 @@ class Plugin_Meta_Kit_Unit_Test extends Unit_Testcase {
 		WP_Mock::expectActionAdded(
 			'admin_notices',
 			array( new AnyInstance( Notices::class ), 'the_notices' ),
+		);
+
+		Plugin_Meta_Kit::initialize( $this->get_settings() );
+
+		WP_Mock::assertHooksAdded();
+	}
+
+	/**
+	 * @covers ::initialize
+	 * @covers ::plugins_page_table_row
+	 */
+	public function test_initialize_adds_the_settings_link_hook_for_this_plugins_row(): void {
+		WP_Mock::expectFilterAdded(
+			'plugin_action_links_my-plugin/my-plugin.php',
+			array( new AnyInstance( Plugins_Page_Table_Row::class ), 'action_links' ),
+			10,
+			4,
 		);
 
 		Plugin_Meta_Kit::initialize( $this->get_settings() );
