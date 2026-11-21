@@ -1,7 +1,8 @@
 /**
  * The plugin details modal, opened from "View details" on plugins.php, is filled from the plugin's readme.txt.
  *
- * Nothing is arranged or created: the expected values are those in `development-plugin/readme.txt`.
+ * Nothing is arranged or created: the expected values are those in `development-plugin/readme.txt` and the headers
+ * of `development-plugin/development-plugin.php`.
  */
 import { test, expect } from '@wordpress/e2e-test-utils-playwright';
 import type { FrameLocator } from '@playwright/test';
@@ -43,6 +44,23 @@ test.describe( 'plugin details modal readme', () => {
 		await expect( requirements ).toContainText( 'Requires WordPress Version: 6.2 or higher' );
 		await expect( requirements ).toContainText( 'Requires PHP Version: 8.2 or higher' );
 		await expect( requirements ).toContainText( 'Compatible up to: 6.5' );
+	} );
+
+	test( 'shows the version, author and homepage from the plugin headers', async () => {
+		const details = modal.locator( '.fyi' );
+
+		await expect( details ).toContainText( 'Version: 1.0.0' );
+
+		await expect( details ).toContainText( 'Author: BrianHenryIE' );
+		await expect( details.getByRole( 'link', { name: 'BrianHenryIE', exact: true } ) ).toHaveAttribute(
+			'href',
+			'https://bhwp.ie'
+		);
+
+		await expect( details.getByRole( 'link', { name: 'Plugin Homepage' } ) ).toHaveAttribute(
+			'href',
+			'https://github.com/BrianHenryIE/bh-wp-plugin-meta-kit'
+		);
 	} );
 
 	test( 'lists the readme contributors, linked to their WordPress.org profiles', async () => {

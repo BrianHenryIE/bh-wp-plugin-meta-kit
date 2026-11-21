@@ -1,6 +1,7 @@
 <?php
 /**
  * Plugin Name:   BH Plugin Meta Kit Development/Test/Demo plugin
+ * Plugin URI:    https://github.com/BrianHenryIE/bh-wp-plugin-meta-kit
  * Description:   A plugin to showcase the library and add test helpers.
  * Version:       1.0.0
  * Author:        BrianHenryIE
@@ -13,10 +14,9 @@ declare( strict_types = 1 );
 
 namespace BrianHenryIE\Plugin_Meta_Kit\Development_Plugin;
 
-
 require_once __DIR__ . '/class-mappings.php';
 
-(new Mappings())->register_hooks();
+( new Mappings() )->register_hooks();
 
 /**
  * The library is the project root, not a Composer dependency of this plugin, so there is no

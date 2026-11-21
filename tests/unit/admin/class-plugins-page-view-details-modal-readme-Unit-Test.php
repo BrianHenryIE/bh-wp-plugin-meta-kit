@@ -102,18 +102,31 @@ class Plugins_Page_View_Details_Modal_Readme_Unit_Test extends Unit_Testcase {
 	}
 
 	/**
-	 * @param array<string, string> $plugin_headers The headers of the plugin's main file.
+	 * Mock the plugin's main file. `get_plugin_data()` returns every header, empty when the file does not have it.
+	 *
+	 * @param ?array<string, string> $plugin_headers The headers the file has, or null for a typical set.
 	 */
-	protected function mock_plugin_headers( array $plugin_headers = array(
-		'Name'    => 'My Plugin',
-		'Version' => '1.2.3',
-	) ): void {
+	protected function mock_plugin_headers( ?array $plugin_headers = null ): void {
+		$plugin_headers ??= array(
+			'PluginURI' => 'https://example.org/my-plugin',
+			'Version'   => '1.2.3',
+			'Author'    => '<a href="https://example.org">Example Author</a>',
+			'AuthorURI' => 'https://example.org',
+		);
+
+		$every_header = array(
+			'Name'        => 'My Plugin',
+			'PluginURI'   => '',
+			'Version'     => '',
+			'Author'      => '',
+			'AuthorURI'   => '',
+			'RequiresWP'  => '',
+			'RequiresPHP' => '',
+		);
+
 		WP_Mock::userFunction( 'get_plugin_data' )
 			->with( $this->plugins_directory . '/my-plugin/my-plugin.php' )
-			->andReturn( $plugin_headers );
-
-		WP_Mock::userFunction( 'get_plugins' )
-			->andReturn( array( 'my-plugin/my-plugin.php' => $plugin_headers ) );
+			->andReturn( array_merge( $every_header, $plugin_headers ) );
 	}
 
 	/**
@@ -151,7 +164,87 @@ class Plugins_Page_View_Details_Modal_Readme_Unit_Test extends Unit_Testcase {
 		$this->assertSame( 'my-plugin', $result['slug'] );
 		$this->assertSame( 'My Plugin', $result['name'] );
 		$this->assertSame( array(), $result['sections'] );
-		$this->assertSame( '1.2.3', $result['Version'] );
+	}
+
+	/**
+	 * Core's modal prints `version`, `author` and `homepage`; the plugin headers are `Version`, `Author`, `PluginURI`.
+	 *
+	 * @covers ::add_tabs
+	 * @covers ::get_plugin_header_fields
+	 */
+	public function test_plugin_headers_are_mapped_to_the_fields_core_prints(): void {
+		$this->mock_plugin_headers();
+
+		$result = $this->add_tabs( $this->get_sut() );
+
+		$this->assertSame( '1.2.3', $result['version'] );
+		$this->assertSame(
+			'<a href="https://example.org">Example Author</a>',
+			$result['author'],
+		);
+		$this->assertSame( 'https://example.org/my-plugin', $result['homepage'] );
+	}
+
+	/**
+	 * @covers ::get_plugin_header_fields
+	 */
+	public function test_plugin_headers_are_not_copied_under_their_own_names(): void {
+		$this->mock_plugin_headers();
+
+		$result = $this->add_tabs( $this->get_sut() );
+
+		$this->assertArrayNotHasKey( 'Version', $result );
+		$this->assertArrayNotHasKey( 'Author', $result );
+		$this->assertArrayNotHasKey( 'PluginURI', $result );
+	}
+
+	/**
+	 * @covers ::get_plugin_header_fields
+	 */
+	public function test_empty_plugin_headers_do_not_replace_an_earlier_filters(): void {
+		$this->mock_plugin_headers(
+			array(
+				'Name'      => 'My Plugin',
+				'PluginURI' => '',
+				'Version'   => '1.2.3',
+				'Author'    => '',
+			),
+		);
+
+		$earlier_result           = new stdClass();
+		$earlier_result->homepage = 'https://example.org/from-another-filter';
+
+		$result = $this->add_tabs( $this->get_sut(), $earlier_result );
+
+		$this->assertSame(
+			'https://example.org/from-another-filter',
+			$result['homepage'],
+		);
+		$this->assertArrayNotHasKey( 'author', $result );
+	}
+
+	/**
+	 * WordPress itself reads these requirements from the plugin's main file, so it wins over the readme.
+	 *
+	 * @covers ::add_tabs
+	 * @covers ::get_plugin_header_fields
+	 */
+	public function test_requirements_in_the_plugin_headers_win_over_the_readme(): void {
+		$this->mock_plugin_headers(
+			array(
+				'Name'        => 'My Plugin',
+				'Version'     => '1.2.3',
+				'RequiresWP'  => '6.4',
+				'RequiresPHP' => '8.3',
+			),
+		);
+		WP_Mock::userFunction( 'get_bloginfo' )->with( 'version' )->andReturn( '6.5.3' );
+		$this->put_readme();
+
+		$result = $this->add_tabs( $this->get_sut( new Readme( requires: '6.2', requires_php: '8.2' ) ) );
+
+		$this->assertSame( '6.4', $result['requires'] );
+		$this->assertSame( '8.3', $result['requires_php'] );
 	}
 
 	/**
@@ -160,9 +253,9 @@ class Plugins_Page_View_Details_Modal_Readme_Unit_Test extends Unit_Testcase {
 	public function test_an_earlier_filters_result_is_added_to(): void {
 		$this->mock_plugin_headers();
 
-		$earlier_result           = new stdClass();
-		$earlier_result->name     = 'Name From Another Filter';
-		$earlier_result->homepage = 'https://example.org';
+		$earlier_result         = new stdClass();
+		$earlier_result->name   = 'Name From Another Filter';
+		$earlier_result->rating = 100;
 
 		$sut      = $this->get_sut();
 		$filtered = $sut->add_tabs( $earlier_result, 'plugin_information', (object) array( 'slug' => 'my-plugin' ) );
@@ -170,7 +263,7 @@ class Plugins_Page_View_Details_Modal_Readme_Unit_Test extends Unit_Testcase {
 
 		$this->assertSame( $earlier_result, $filtered );
 		$this->assertSame( 'Name From Another Filter', $result['name'] );
-		$this->assertSame( 'https://example.org', $result['homepage'] );
+		$this->assertSame( 100, $result['rating'] );
 		$this->assertSame( 'my-plugin', $result['slug'] );
 	}
 

@@ -70,18 +70,15 @@ class Plugins_Page_View_Details_Modal_Readme {
 			}
 		}
 
-		$plugin_headers = get_plugin_data( constant( 'WP_PLUGIN_DIR' ) . '/' . $this->settings->plugin_basename );
-		// TODO it is reading the plugin file but looks like the fields need to be mapped.
-		$fields = array_merge( $fields, $plugin_headers );
+		$plugin_header_fields = $this->get_plugin_header_fields();
 
 		$readme_path = $this->get_readme_path();
 		if ( null === $readme_path ) {
-			return $this->set_fields( $result, $fields );
+			return $this->set_fields( $result, array_merge( $fields, $plugin_header_fields ) );
 		}
 
-		$root_plugin_file_headers = get_plugins()[ $this->settings->plugin_basename ] ?? array();
-
-		$fields = array_merge( $fields, $root_plugin_file_headers, $this->get_readme_fields( $readme_path ) );
+		// WordPress reads the plugin's requirements from its main file, so its headers win over the readme.
+		$fields = array_merge( $fields, $this->get_readme_fields( $readme_path ), $plugin_header_fields );
 
 		// Lie and say the plugin has been tested on patch versions of WordPress.
 		// Otherwise a banner is displayed: "Warning: This plugin has not been tested with your current version of WordPress."
@@ -101,6 +98,38 @@ class Plugins_Page_View_Details_Modal_Readme {
 		}
 
 		return $this->set_fields( $result, $fields );
+	}
+
+	/**
+	 * The headers of the plugin's main file, as the plugin information fields core's modal prints.
+	 *
+	 * Empty values are left out, so they do not replace what an earlier filter or the readme set.
+	 *
+	 * @see install_plugin_information()
+	 *
+	 * @return array<string, string>
+	 */
+	protected function get_plugin_header_fields(): array {
+		// With markup, `Author` is a link to `Author URI`, which is how the modal prints it.
+		$plugin_headers = get_plugin_data( constant( 'WP_PLUGIN_DIR' ) . '/' . $this->settings->plugin_basename );
+
+		$field_headers = array(
+			'version'      => 'Version',
+			'author'       => 'Author',
+			'homepage'     => 'PluginURI',
+			'requires'     => 'RequiresWP',
+			'requires_php' => 'RequiresPHP',
+		);
+
+		$fields = array();
+
+		foreach ( $field_headers as $field => $header ) {
+			if ( '' !== $plugin_headers[ $header ] ) {
+				$fields[ $field ] = $plugin_headers[ $header ];
+			}
+		}
+
+		return $fields;
 	}
 
 	/**
