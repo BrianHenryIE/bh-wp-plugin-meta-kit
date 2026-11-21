@@ -1,6 +1,12 @@
 parameters:
 	ignoreErrors:
 		-
+			message: '#^Cannot access offset non\-falsy\-string on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: development-plugin/class-mappings.php
+
+		-
 			message: '#^Access to constant ACTIVATED_TIME_OPTION_KEY on an unknown class BrianHenryIE\\Plugin_Meta_Kit\\Admin\\Activator\.$#'
 			identifier: class.notFound
 			count: 1
@@ -311,30 +317,6 @@ parameters:
 			identifier: empty.variable
 			count: 1
 			path: src/admin/class-plugins-page-view-details-modal.php
-
-		-
-			message: '#^Method BrianHenryIE\\Plugin_Meta_Kit\\Plugin_Meta_Kit_Settings_Interface@anonymous/src/class\-plugin\-meta\-kit\.php\:31\:\:get_plugin_name\(\) should return string but returns mixed\.$#'
-			identifier: return.type
-			count: 1
-			path: src/class-plugin-meta-kit.php
-
-		-
-			message: '#^Property BrianHenryIE\\Plugin_Meta_Kit\\Plugin_Meta_Kit_Settings_Interface@anonymous/src/class\-plugin\-meta\-kit\.php\:31\:\:\$plugin_basename \(string\) does not accept int\|string\|null\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: src/class-plugin-meta-kit.php
-
-		-
-			message: '#^Property BrianHenryIE\\Plugin_Meta_Kit\\Plugin_Meta_Kit_Settings_Interface@anonymous/src/class\-plugin\-meta\-kit\.php\:31\:\:\$root_plugin_file_headers type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: src/class-plugin-meta-kit.php
-
-		-
-			message: '#^Static method BrianHenryIE\\Plugin_Meta_Kit\\Plugin_Meta_Kit\:\:initialize\(\) invoked with 1 parameter, 0 required\.$#'
-			identifier: arguments.count
-			count: 1
-			path: src/class-plugin-meta-kit.php
 
 		-
 			message: '#^Parameter \#1 \$array of function array_reduce expects array\<string\>, mixed given\.$#'

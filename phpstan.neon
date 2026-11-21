@@ -7,6 +7,7 @@ parameters:
     level: 10
     paths:
         - bootstrap.php
+        - bootstrap2.php
         - src
         - development-plugin
         - tests
@@ -22,3 +23,10 @@ parameters:
         - vendor/wp-cli/wp-cli/php/utils.php
     # A baseline entry or ignore which no longer matches is an error, so fixed errors are removed from the baseline.
     reportUnmatchedIgnoredErrors: true
+    ignoreErrors:
+        # WP_Mock accepts `array( $object_matcher, 'method' )` for a hooked method, which its `callable` annotation does not allow.
+        -
+            message: '#^Parameter \#2 \$callback of static method WP_Mock\:\:expect(Action|Filter)(Not)?Added\(\) expects .*, array\{.*\} given\.$#'
+            identifier: argument.type
+            path: tests/unit
+            reportUnmatched: false

@@ -9,12 +9,12 @@
 
 namespace BrianHenryIE\Plugin_Meta_Kit\Admin;
 
-use BrianHenryIE\Plugin_Meta_Kit\Plugin_Meta_Kit_Settings_Interface;
+use BrianHenryIE\Plugin_Meta_Kit\Plugin_Meta_Kit_Settings;
 
 class Plugins_Page_View_Details_Modal {
 
 	public function __construct(
-		protected Plugin_Meta_Kit_Settings_Interface $settings
+		protected Plugin_Meta_Kit_Settings $settings
 	) {
 	}
 
@@ -39,10 +39,10 @@ class Plugins_Page_View_Details_Modal {
 		// This is needed to get the `View details` link to appear on `plugins.php`.
 
 		// By default, add to `no_update`. If another mechanism has an update available, let that move and override this.
-		$update_plugins->no_update[ $this->settings->get_plugin_basename() ] = (object) array(
-			//		'id' => $settings->get_plugin_slug(), // maybe the Composer package name is better here.
-			'slug' => $this->settings->get_plugin_slug(),
-			//		'plugin' => $settings->get_plugin_basename(),
+		$update_plugins->no_update[ $this->settings->plugin_basename ] = (object) array(
+			//		'id' => $settings->plugin_slug, // maybe the Composer package name is better here.
+			'slug' => $this->settings->plugin_slug,
+			//		'plugin' => $settings->plugin_basename,
 			//		'new_version' => '1.2.3',
 			//		'url' => 'https://bhwp.ie/test-plugin/',
 			//		'package' => 'https://bhwp.ie/test-plugin/wordpress-importer.0.8.1.zip',
@@ -74,7 +74,7 @@ class Plugins_Page_View_Details_Modal {
 	 */
 	public function add_tabs( $res, $action, $args ) {
 
-		if ( empty( $args ) || ! isset( $args->slug ) || $this->settings->get_plugin_slug() !== $args->slug ) {
+		if ( empty( $args ) || ! isset( $args->slug ) || $this->settings->plugin_slug !== $args->slug ) {
 			return $res;
 		}
 
@@ -83,8 +83,8 @@ class Plugins_Page_View_Details_Modal {
 		}
 
 		$minimum = array(
-			'slug'     => $this->settings->get_plugin_slug(),
-			'name'     => $this->settings->get_plugin_name(),
+			'slug'     => $this->settings->plugin_slug,
+			'name'     => $this->settings->plugin_name,
 			'sections' => array(),
 		);
 

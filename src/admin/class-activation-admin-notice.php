@@ -7,7 +7,7 @@
 
 namespace BrianHenryIE\Plugin_Meta_Kit\Admin;
 
-use BrianHenryIE\Plugin_Meta_Kit\Plugin_Meta_Kit_Settings_Interface;
+use BrianHenryIE\Plugin_Meta_Kit\Plugin_Meta_Kit_Settings;
 use Psr\Log\LoggerAwareTrait;
 use Psr\Log\LoggerInterface;
 use WPTRT\AdminNotices\Notices;
@@ -26,9 +26,9 @@ class Activation_Admin_Notice {
 	/**
 	 * The plugin's settings.
 	 *
-	 * @var Plugin_Meta_Kit_Settings_Interface
+	 * @var Plugin_Meta_Kit_Settings
 	 */
-	protected Plugin_Meta_Kit_Settings_Interface $settings;
+	protected Plugin_Meta_Kit_Settings $settings;
 
 	/**
 	 * WPTRT Notices instance.
@@ -42,10 +42,10 @@ class Activation_Admin_Notice {
 	/**
 	 * Instantiate.
 	 *
-	 * @param Plugin_Meta_Kit_Settings_Interface $settings The plugin settings.
+	 * @param Plugin_Meta_Kit_Settings $settings The plugin settings.
 	 * @param LoggerInterface    $logger PSR logger.
 	 */
-	public function __construct( Plugin_Meta_Kit_Settings_Interface $settings, LoggerInterface $logger ) {
+	public function __construct( Plugin_Meta_Kit_Settings $settings, LoggerInterface $logger ) {
 		$this->settings = $settings;
 		$this->setLogger( $logger );
 	}
@@ -106,9 +106,9 @@ class Activation_Admin_Notice {
 
 		$settings_url = admin_url( 'admin.php?page=wc-settings&tab=checkout&section=checkout-rate-limiting' );
 
-		$id      = $this->settings->get_plugin_slug() . '-activation-configuration';
+		$id      = $this->settings->plugin_slug . '-activation-configuration';
 		$title   = '';
-		$message = '<strong>' . $this->settings->get_plugin_name() . '</strong> ' . __( 'options can be configured under', 'bh-wc-checkout-rate-limiter' ) . " <a href=\"{$settings_url}\">WooCommerce / Settings / Payments / Rate Limiting</a>.";
+		$message = '<strong>' . $this->settings->plugin_name . '</strong> ' . __( 'options can be configured under', 'bh-wc-checkout-rate-limiter' ) . " <a href=\"{$settings_url}\">WooCommerce / Settings / Payments / Rate Limiting</a>.";
 
 		$options = array(
 			'capability' => 'manage_options',

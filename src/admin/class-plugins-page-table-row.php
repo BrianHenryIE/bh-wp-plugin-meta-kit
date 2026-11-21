@@ -10,7 +10,7 @@
 
 namespace BrianHenryIE\Plugin_Meta_Kit\Admin;
 
-use BrianHenryIE\Plugin_Meta_Kit\Plugin_Meta_Kit_Settings_Interface;
+use BrianHenryIE\Plugin_Meta_Kit\Plugin_Meta_Kit_Settings;
 
 /**
  * This class adds a `Settings` link and a `GitHub` link on the plugins.php page.
@@ -20,16 +20,16 @@ class Plugins_Page_Table_Row {
 	/**
 	 * Needed for the plugin slug and basename.
 	 *
-	 * @var Plugin_Meta_Kit_Settings_Interface
+	 * @var Plugin_Meta_Kit_Settings
 	 */
-	protected Plugin_Meta_Kit_Settings_Interface $settings;
+	protected Plugin_Meta_Kit_Settings $settings;
 
 	/**
 	 * Constructor.
 	 *
-	 * @param Plugin_Meta_Kit_Settings_Interface $settings The plugin settings.
+	 * @param Plugin_Meta_Kit_Settings $settings The plugin settings.
 	 */
-	public function __construct( Plugin_Meta_Kit_Settings_Interface $settings ) {
+	public function __construct( Plugin_Meta_Kit_Settings $settings ) {
 		$this->settings = $settings;
 	}
 
@@ -46,7 +46,7 @@ class Plugins_Page_Table_Row {
 	 */
 	public function action_links( array $links_array, ?string $plugin_file, ?array $plugin_data, ?string $context ): array {
 
-		$settings_url = admin_url( '/options-general.php?page=' . $this->settings->get_plugin_slug() );
+		$settings_url = admin_url( '/options-general.php?page=' . $this->settings->plugin_slug );
 
 		array_unshift( $links_array, '<a href="' . $settings_url . '">Settings</a>' );
 
@@ -69,9 +69,9 @@ class Plugins_Page_Table_Row {
 	 */
 	public function row_meta( array $plugin_meta, string $plugin_file_name, array $plugin_data, string $status ): array {
 
-		if ( $this->settings->get_plugin_basename() === $plugin_file_name ) {
+		if ( $this->settings->plugin_basename === $plugin_file_name ) {
 
-			$plugin_meta[] = '<a target="_blank" href="https://github.com/BrianHenryIE/' . $this->settings->get_plugin_slug() . '">View on GitHub</a>';
+			$plugin_meta[] = '<a target="_blank" href="https://github.com/BrianHenryIE/' . $this->settings->plugin_slug . '">View on GitHub</a>';
 		}
 
 		return $plugin_meta;

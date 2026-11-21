@@ -5,7 +5,7 @@
 
 namespace BrianHenryIE\Plugin_Meta_Kit\Admin;
 
-use BrianHenryIE\Plugin_Meta_Kit\Plugin_Meta_Kit_Settings_Interface;
+use BrianHenryIE\Plugin_Meta_Kit\Plugin_Meta_Kit_Settings;
 use Parsedown;
 use WordPressdotorg\Plugin_Directory\Readme\Parser as ReadmeParser;
 
@@ -14,10 +14,10 @@ class Plugins_Page_View_Details_Modal_Readme {
 	/**
 	 * Constructor.
 	 *
-	 * @param Plugin_Meta_Kit_Settings_Interface $settings The meta kit settings.
+	 * @param Plugin_Meta_Kit_Settings $settings The meta kit settings.
 	 */
 	public function __construct(
-		protected Plugin_Meta_Kit_Settings_Interface $settings
+		protected Plugin_Meta_Kit_Settings $settings
 	) {
 	}
 
@@ -30,7 +30,7 @@ class Plugins_Page_View_Details_Modal_Readme {
 	 */
 	public function add_tabs( $res, $action, $args ) {
 
-		if ( empty( $args ) || ! isset( $args->slug ) || $this->settings->get_plugin_slug() !== $args->slug ) {
+		if ( empty( $args ) || ! isset( $args->slug ) || $this->settings->plugin_slug !== $args->slug ) {
 			return $res;
 		}
 
@@ -39,8 +39,8 @@ class Plugins_Page_View_Details_Modal_Readme {
 		}
 
 		$minimum = array(
-			'slug'     => $this->settings->get_plugin_slug(),
-			'name'     => $this->settings->get_plugin_name(),
+			'slug'     => $this->settings->plugin_slug,
+			'name'     => $this->settings->plugin_name,
 			'sections' => array(),
 		);
 
@@ -50,18 +50,18 @@ class Plugins_Page_View_Details_Modal_Readme {
 			}
 		}
 
-		$plugin_headers = get_plugin_data( constant('WP_PLUGIN_DIR') . '/' . $this->settings->get_plugin_basename() );
+		$plugin_headers = get_plugin_data( constant('WP_PLUGIN_DIR') . '/' . $this->settings->plugin_basename );
 		// TODO it is reading the plugin file but looks like the fields need to be mapped
 		foreach( $plugin_headers as $key => $value ) {
 			$res->$key = $value;
 		}
 
-		$readme_path = constant( 'WP_PLUGIN_DIR' ) . '/' . $this->settings->get_plugin_slug() . '/readme.txt';
+		$readme_path = constant( 'WP_PLUGIN_DIR' ) . '/' . $this->settings->plugin_slug . '/readme.txt';
 		if ( ! is_readable( $readme_path ) ) {
 			return $res;
 		}
 
-		$root_plugin_file_headers = get_plugins()[$this->settings->get_plugin_basename()];
+		$root_plugin_file_headers = get_plugins()[$this->settings->plugin_basename];
 
 		foreach( $root_plugin_file_headers as $key => $value ) {
 			$res->$key = $value;

@@ -7,7 +7,7 @@
 
 namespace BrianHenryIE\Plugin_Meta_Kit\Admin;
 
-use BrianHenryIE\Plugin_Meta_Kit\Plugin_Meta_Kit_Settings_Interface;
+use BrianHenryIE\Plugin_Meta_Kit\Plugin_Meta_Kit_Settings;
 use Psr\Log\LoggerAwareTrait;
 use Psr\Log\LoggerInterface;
 
@@ -20,11 +20,11 @@ class Plugin_Installer {
 	/**
 	 * Constructor.
 	 *
-	 * @param Plugin_Meta_Kit_Settings_Interface $settings The plugin settings.
+	 * @param Plugin_Meta_Kit_Settings $settings The plugin settings.
 	 * @param LoggerInterface    $logger The plugin's PSR logger.
 	 */
 	public function __construct(
-		protected Plugin_Meta_Kit_Settings_Interface $settings,
+		protected Plugin_Meta_Kit_Settings $settings,
 		LoggerInterface $logger,
 	) {
 		$this->setLogger( $logger );
@@ -48,14 +48,14 @@ class Plugin_Installer {
 	 */
 	public function add_settings_link( $install_actions, $_api, $plugin_file ): array {
 
-		if ( $plugin_file !== $this->settings->get_plugin_basename() ) {
+		if ( $plugin_file !== $this->settings->plugin_basename ) {
 			return $install_actions;
 		}
 
 		$install_actions[] = '•';
 
-		$settings_url      = admin_url( '/options-general.php?page=' . $this->settings->get_plugin_slug() );
-		$install_actions[] = '<a href="' . $settings_url . '">Go to ' . $this->settings->get_plugin_name() . ' settings</a>';
+		$settings_url      = admin_url( '/options-general.php?page=' . $this->settings->plugin_slug );
+		$install_actions[] = '<a href="' . $settings_url . '">Go to ' . $this->settings->plugin_name . ' settings</a>';
 
 		return $install_actions;
 	}

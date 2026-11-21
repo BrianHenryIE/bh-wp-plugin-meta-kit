@@ -9,12 +9,12 @@
 
 namespace BrianHenryIE\Plugin_Meta_Kit\Admin;
 
-use BrianHenryIE\Plugin_Meta_Kit\Plugin_Meta_Kit_Settings_Interface;
+use BrianHenryIE\Plugin_Meta_Kit\Plugin_Meta_Kit_Settings;
 
 class Plugins_Page_View_Details_Modal_Tab_Changelog {
 
 	public function __construct(
-		protected Plugin_Meta_Kit_Settings_Interface $settings,
+		protected Plugin_Meta_Kit_Settings $settings,
 	) {
 	}
 
@@ -29,11 +29,11 @@ class Plugins_Page_View_Details_Modal_Tab_Changelog {
 	 */
 	public function add_changelog_tab( $res, $action, $args ) {
 
-		if ( empty( $args ) || ! isset( $args->slug ) || $this->settings->get_plugin_slug() !== $args->slug ) {
+		if ( empty( $args ) || ! isset( $args->slug ) || $this->settings->plugin_slug !== $args->slug ) {
 			return $res;
 		}
 
-		if ( ! is_readable( constant( WP_PLUGIN_DIR ) . '/' . $this->settings->get_plugin_slug() . '/CHANGELOG.md' ) ) {
+		if ( ! is_readable( constant( WP_PLUGIN_DIR ) . '/' . $this->settings->plugin_slug . '/CHANGELOG.md' ) ) {
 			return $res;
 		}
 

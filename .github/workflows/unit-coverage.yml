@@ -14,7 +14,7 @@ on:
       - '**.txt'
 
 env:
-  COVERAGE_PHP_VERSION: '8.0'
+  COVERAGE_PHP_VERSION: '8.2'
 
 jobs:
   php-tests:
@@ -36,7 +36,7 @@ jobs:
 
     strategy:
       matrix:
-        php: [ '8.0', '8.1', '8.2', '8.3', '8.4' ]
+        php: [ '8.2', '8.3', '8.4' ]
 
     steps:
       - uses: actions/checkout@v6

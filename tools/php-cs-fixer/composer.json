@@ -1,6 +1,6 @@
 {
     "name": "brianhenryie/bh-wp-plugin-meta-kit-php-cs-fixer",
-    "description": "php-cs-fixer and its WordPress preset, installed apart from the library so its PHP 8.3 requirement does not stop the library's dependencies installing on PHP 8.0.",
+    "description": "php-cs-fixer and its WordPress preset, installed apart from the library so its PHP 8.3 requirement does not stop the library's dependencies installing on PHP 8.2.",
     "type": "project",
     "license": "GPL-2.0-or-later",
     "require": {

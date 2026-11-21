@@ -7,7 +7,7 @@ use BrianHenryIE\Plugin_Meta_Kit\PHPCSFixer\Fixers\LongCallToMultilineFixer;
 use PhpCsFixer\Finder;
 
 /*
- * The preset needs PHP 8.3, and the library supports 8.0, so it is installed apart from the library's own
+ * The preset needs PHP 8.3, and the library supports 8.2, so it is installed apart from the library's own
  * dependencies: `composer install --working-dir=tools/php-cs-fixer`, which `composer php-cs-fixer` does when needed.
  */
 require_once __DIR__ . '/tools/php-cs-fixer/vendor/autoload.php';

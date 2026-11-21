@@ -7,7 +7,7 @@
 
 namespace BrianHenryIE\Plugin_Meta_Kit\Admin;
 
-use BrianHenryIE\Plugin_Meta_Kit\Plugin_Meta_Kit_Settings_Interface;
+use BrianHenryIE\Plugin_Meta_Kit\Plugin_Meta_Kit_Settings;
 
 /**
  * Hooks into wp-admin's admin_notice action and prints a warning if the plugin's dependencies are not present.
@@ -19,10 +19,10 @@ class Dependencies_Notice {
 	/**
 	 * Constructor
 	 *
-	 * @param Plugin_Meta_Kit_Settings_Interface $settings The plugin settings.
+	 * @param Plugin_Meta_Kit_Settings $settings The plugin settings.
 	 */
 	public function __construct(
-		protected Plugin_Meta_Kit_Settings_Interface $settings
+		protected Plugin_Meta_Kit_Settings $settings
 	) {
 	}
 
@@ -71,13 +71,13 @@ class Dependencies_Notice {
 			add_query_arg(
 				array(
 					'action' => 'deactivate',
-					'plugin' => $this->settings->get_plugin_basename(),
+					'plugin' => $this->settings->plugin_basename,
 				),
 				admin_url(
 					'plugins.php'
 				)
 			),
-			"deactivate-plugin_{$this->settings->get_plugin_basename()}"
+			"deactivate-plugin_{$this->settings->plugin_basename}"
 		);
 
 		echo ' <a href="' . esc_url( $deactivate_link ) . '">';

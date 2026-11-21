@@ -49,7 +49,7 @@
     }
   },
   "require": {
-    "php": ">=8.0",
+    "php": ">=8.2",
     "afragen/wordpress-plugin-readme-parser": "dev-master",
     "erusev/parsedown": "*",
     "wptrt/admin-notices": "^1.0"
