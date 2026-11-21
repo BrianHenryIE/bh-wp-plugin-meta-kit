@@ -29,9 +29,6 @@ jobs:
           tools: composer, cs2pr
           extensions: zip
 
-      - name: Install sponge
-        run: sudo apt-get install moreutils
-
       - name: Run composer install
         run: composer install
 
@@ -48,7 +45,7 @@ jobs:
       - name: Run PHPCS to add annotations to the code
         continue-on-error: true
         run: |
-          vendor/bin/phpcs -q --report=checkstyle | sponge phpcs-checkstyle.xml
+          vendor/bin/phpcs -q --report=checkstyle > phpcs-checkstyle.xml
           cat phpcs-checkstyle.xml | cs2pr
 
       - name: Fail if there are still phpcs errors in the production code (master/main)
