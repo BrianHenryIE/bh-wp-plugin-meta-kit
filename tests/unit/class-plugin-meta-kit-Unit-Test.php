@@ -4,6 +4,7 @@ declare( strict_types = 1 );
 
 namespace BrianHenryIE\Plugin_Meta_Kit;
 
+use BrianHenryIE\Plugin_Meta_Kit\Admin\Plugin_Installer;
 use BrianHenryIE\Plugin_Meta_Kit\Admin\Plugins_Page_Table_Row;
 use BrianHenryIE\Plugin_Meta_Kit\Admin\Plugins_Page_View_Details_Modal;
 use BrianHenryIE\Plugin_Meta_Kit\Admin\Plugins_Page_View_Details_Modal_Readme;
@@ -102,6 +103,23 @@ class Plugin_Meta_Kit_Unit_Test extends Unit_Testcase {
 			array( new AnyInstance( Plugins_Page_Table_Row::class ), 'add_github_row_meta' ),
 			10,
 			4,
+		);
+
+		Plugin_Meta_Kit::initialize( $this->get_settings() );
+
+		WP_Mock::assertHooksAdded();
+	}
+
+	/**
+	 * @covers ::initialize
+	 * @covers ::plugin_installer
+	 */
+	public function test_initialize_adds_the_settings_link_hook_for_after_installing(): void {
+		WP_Mock::expectFilterAdded(
+			'install_plugin_complete_actions',
+			array( new AnyInstance( Plugin_Installer::class ), 'add_settings_link' ),
+			10,
+			3,
 		);
 
 		Plugin_Meta_Kit::initialize( $this->get_settings() );

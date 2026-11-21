@@ -10,6 +10,7 @@ declare( strict_types = 1 );
 namespace BrianHenryIE\Plugin_Meta_Kit;
 
 use BrianHenryIE\Plugin_Meta_Kit\Admin\Dependencies_Notice;
+use BrianHenryIE\Plugin_Meta_Kit\Admin\Plugin_Installer;
 use BrianHenryIE\Plugin_Meta_Kit\Admin\Plugins_Page_Table_Row;
 use BrianHenryIE\Plugin_Meta_Kit\Admin\Plugins_Page_View_Details_Modal;
 use BrianHenryIE\Plugin_Meta_Kit\Admin\Plugins_Page_View_Details_Modal_Readme;
@@ -40,6 +41,7 @@ class Plugin_Meta_Kit {
 		self::$instance->view_details_modal();
 		self::$instance->dependencies_notice();
 		self::$instance->plugins_page_table_row();
+		self::$instance->plugin_installer();
 	}
 
 	/**
@@ -129,6 +131,19 @@ class Plugin_Meta_Kit {
 			array( $plugins_page_table_row, 'add_github_row_meta' ),
 			10,
 			4,
+		);
+	}
+
+	/**
+	 * Add the hook which adds the Settings link to the screen shown after the plugin is installed.
+	 */
+	public function plugin_installer(): void {
+		$plugin_installer = new Plugin_Installer( $this->settings, $this->logger );
+		add_filter(
+			'install_plugin_complete_actions',
+			array( $plugin_installer, 'add_settings_link' ),
+			10,
+			3,
 		);
 	}
 

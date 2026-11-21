@@ -1,18 +1,21 @@
 <?php
 /**
- * Adds links to Settings and Logs on the "Plugin updated successfully" page.
+ * Adds a link to the plugin's settings on the "Plugin installed successfully" screen.
  *
  * @package brianhenryie/bh-wp-plugin-meta-kit
  */
 
+declare( strict_types = 1 );
+
 namespace BrianHenryIE\Plugin_Meta_Kit\Admin;
 
+use BrianHenryIE\Plugin_Meta_Kit\Plugin_Meta_Kit;
 use BrianHenryIE\Plugin_Meta_Kit\Plugin_Meta_Kit_Settings;
 use Psr\Log\LoggerAwareTrait;
 use Psr\Log\LoggerInterface;
 
 /**
- * Checks is WooCommerce active, then appends the Settings link to the "Return to plugins installer" link on the plugin update page.
+ * Appends the Settings link after the "Go to Plugins page" link shown once a plugin has been installed.
  */
 class Plugin_Installer {
 	use LoggerAwareTrait;
@@ -21,7 +24,7 @@ class Plugin_Installer {
 	 * Constructor.
 	 *
 	 * @param Plugin_Meta_Kit_Settings $settings The plugin settings.
-	 * @param LoggerInterface    $logger The plugin's PSR logger.
+	 * @param LoggerInterface          $logger   The plugin's PSR logger.
 	 */
 	public function __construct(
 		protected Plugin_Meta_Kit_Settings $settings,
@@ -31,11 +34,12 @@ class Plugin_Installer {
 	}
 
 	/**
-	 * Add the settings page link to the existing links.
+	 * Add the settings page link to the existing links, when the plugin has one.
 	 *
 	 * These are only displayed on subsequent plugin installs, not the first.
 	 *
 	 * @hooked install_plugin_complete_actions
+	 * @see Plugin_Meta_Kit::plugin_installer()
 	 * @see \Plugin_Installer_Skin::after()
 	 *
 	 * @param string[] $install_actions Array of plugin action links.
@@ -47,15 +51,23 @@ class Plugin_Installer {
 	 * @return string[]
 	 */
 	public function add_settings_link( $install_actions, $_api, $plugin_file ): array {
-
 		if ( $plugin_file !== $this->settings->plugin_basename ) {
+			return $install_actions;
+		}
+
+		if ( '' === $this->settings->settings_url ) {
 			return $install_actions;
 		}
 
 		$install_actions[] = '•';
 
-		$settings_url      = admin_url( '/options-general.php?page=' . $this->settings->plugin_slug );
-		$install_actions[] = '<a href="' . $settings_url . '">Go to ' . $this->settings->plugin_name . ' settings</a>';
+		$install_actions[] = '<a href="' . esc_url( $this->settings->settings_url ) . '">'
+			. sprintf(
+				/* translators: %s: the plugin's name. */
+				esc_html__( 'Go to %s settings', 'bh-wp-plugin-meta-kit' ),
+				esc_html( $this->settings->plugin_name ),
+			)
+			. '</a>';
 
 		return $install_actions;
 	}
