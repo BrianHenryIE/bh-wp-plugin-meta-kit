@@ -66,7 +66,7 @@
     "jaschilz/php-coverage-badger": "^2.0",
     "johnpbloch/wordpress": "*",
     "kporras07/composer-symlinks": "dev-master",
-    "lucatume/wp-browser": "^4.0",
+    "lucatume/wp-browser": "^4.7",
     "mheap/phpunit-github-actions-printer": "^1.5",
     "phpcompatibility/phpcompatibility-wp": "*",
     "phpstan/extension-installer": "*",
