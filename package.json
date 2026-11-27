@@ -11,7 +11,7 @@
   "license": "GPL-2.0+",
   "devDependencies": {
     "@playwright/test": "^1.58.2",
-    "@types/node": "^20.12.12",
+    "@types/node": "^26.6.7",
     "@wordpress/e2e-test-utils-playwright": "^3.3.0",
     "@wordpress/env": "^12.2",
     "dotenv": "^18.0.10"
